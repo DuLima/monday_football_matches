@@ -1,11 +1,17 @@
-import type { Season } from '../data/types';
-import { computeRankings, teamStats } from '../lib/stats';
+import type { Season, TeamId } from '../data/types';
+import { computeRankings, ownGoalsByTeam, teamStats, topOwnGoalPlayers } from '../lib/stats';
 import { formatDate, fmt1 } from '../lib/format';
 
 export function RankingsGrid({ season }: { season: Season }) {
   const r = computeRankings(season);
   const chiti = teamStats('chiti', season.matches);
   const grilo = teamStats('grilo', season.matches);
+  const og = ownGoalsByTeam(season);
+  const ogTeamLeader: TeamId | null = og.chiti === 0 && og.grilo === 0
+    ? null
+    : og.chiti >= og.grilo ? 'chiti' : 'grilo';
+  const ogPlayers = topOwnGoalPlayers(season);
+  const topOgPlayer = ogPlayers[0] ?? null;
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -93,6 +99,28 @@ export function RankingsGrid({ season }: { season: Season }) {
       <Card border="slate" icon="🎯" title="Golos para Vencer — Túnel do Grilo FC">
         <Value>{grilo.wins ? fmt1(grilo.goalsPerWin) : '—'} golos/vitória</Value>
         <Sub>{grilo.goalsFor} golos em {grilo.wins} vitórias</Sub>
+      </Card>
+
+      <Card border="rose" icon="🙈" title="Equipa com Mais Auto-Golos">
+        {ogTeamLeader ? (
+          <>
+            <Value>{season.teams[ogTeamLeader].name}</Value>
+            <Sub>{og[ogTeamLeader]} auto-golo(s) esta época</Sub>
+          </>
+        ) : (
+          <Sub>Ainda sem auto-golos.</Sub>
+        )}
+      </Card>
+
+      <Card border="rose" icon="😅" title="Jogador com Mais Auto-Golos">
+        {topOgPlayer ? (
+          <>
+            <Value>{topOgPlayer.name}</Value>
+            <Sub>{topOgPlayer.ownGoals} auto-golo(s) · {season.teams[topOgPlayer.team].name}</Sub>
+          </>
+        ) : (
+          <Sub>Ainda sem auto-golos.</Sub>
+        )}
       </Card>
     </div>
   );

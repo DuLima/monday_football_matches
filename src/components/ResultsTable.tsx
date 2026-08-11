@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Match, Season, TeamId } from '../data/types';
-import { playerGoals, playerName } from '../data/types';
+import { playerGoals, playerName, playerOwnGoals } from '../data/types';
 import { useAuth } from '../firebase/auth';
 import { formatDate } from '../lib/format';
 import { isPlayed } from '../lib/stats';
@@ -117,6 +117,7 @@ function MatchDetail({ match, season }: { match: Match; season: Season }) {
                 {players.map(entry => {
                   const name = playerName(entry);
                   const goals = playerGoals(entry);
+                  const ownGoals = playerOwnGoals(entry);
                   return (
                     <span
                       key={name}
@@ -127,6 +128,11 @@ function MatchDetail({ match, season }: { match: Match; season: Season }) {
                       {goals > 0 && (
                         <span className="inline-flex items-center gap-0.5 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-700">
                           {goals} ⚽
+                        </span>
+                      )}
+                      {ownGoals > 0 && (
+                        <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-100 px-1.5 py-0.5 text-[10px] font-bold text-rose-700" title="Auto-golos">
+                          {ownGoals} AG
                         </span>
                       )}
                       {match.motm === name && (

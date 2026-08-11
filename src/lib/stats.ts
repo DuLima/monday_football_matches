@@ -1,5 +1,5 @@
 import type { Match, Season, TeamId } from '../data/types';
-import { playerGoals, playerName } from '../data/types';
+import { playerGoals, playerName, playerOwnGoals } from '../data/types';
 import { monthKey, monthLabel } from './format';
 
 export type MatchOutcome = 'V' | 'E' | 'D';
@@ -219,6 +219,7 @@ export type PlayerStat = {
   losses: number;
   winPct: number;
   goals: number;
+  ownGoals: number;
 };
 
 export function playerStats(season: Season): PlayerStat[] {
@@ -231,12 +232,14 @@ export function playerStats(season: Season): PlayerStat[] {
       for (const entry of roster) {
         const name = playerName(entry);
         const goals = playerGoals(entry);
+        const og = playerOwnGoals(entry);
         const stat = map.get(name) ?? {
-          name, games: 0, perTeam: {}, motm: 0, wins: 0, draws: 0, losses: 0, winPct: 0, goals: 0,
+          name, games: 0, perTeam: {}, motm: 0, wins: 0, draws: 0, losses: 0, winPct: 0, goals: 0, ownGoals: 0,
         };
         stat.games += 1;
         stat.perTeam[team] = (stat.perTeam[team] ?? 0) + 1;
         stat.goals += goals;
+        stat.ownGoals += og;
         if (outcome === 'V') stat.wins++;
         else if (outcome === 'E') stat.draws++;
         else if (outcome === 'D') stat.losses++;
@@ -250,4 +253,29 @@ export function playerStats(season: Season): PlayerStat[] {
     p.winPct = p.games ? Math.round((p.wins / p.games) * 100) : 0;
   }
   return out.sort((a, b) => b.games - a.games || b.wins - a.wins);
+}
+
+export function ownGoalsByTeam(season: Season): Record<TeamId, number> {
+  const totals: Record<TeamId, number> = { chiti: 0, grilo: 0 };
+  for (const m of season.matches) {
+    if (!m.players) continue;
+    for (const team of Object.keys(m.players) as TeamId[]) {
+      for (const entry of m.players[team] ?? []) {
+        totals[team] += playerOwnGoals(entry);
+      }
+    }
+  }
+  return totals;
+}
+
+export type TopOgPlayer = { name: string; ownGoals: number; team: TeamId };
+export function topOwnGoalPlayers(season: Season): TopOgPlayer[] {
+  const players = playerStats(season).filter(p => p.ownGoals > 0);
+  return players
+    .map(p => {
+      const teams = (Object.entries(p.perTeam) as [TeamId, number][])
+        .sort((a, b) => b[1] - a[1]);
+      return { name: p.name, ownGoals: p.ownGoals, team: teams[0]?.[0] ?? 'chiti' };
+    })
+    .sort((a, b) => b.ownGoals - a.ownGoals);
 }

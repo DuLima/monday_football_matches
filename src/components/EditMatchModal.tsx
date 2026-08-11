@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import type { Match, MatchPlayer, MatchStatus, PlayerEntry, Season, Team, TeamId } from '../data/types';
-import { playerGoals, playerName } from '../data/types';
+import { playerGoals, playerName, playerOwnGoals } from '../data/types';
 import { useSeason } from '../firebase/season';
 import { formatDate } from '../lib/format';
 
 type Props = { match: Match; season: Season; onClose: () => void };
 
 function toMatchPlayers(roster?: PlayerEntry[]): MatchPlayer[] {
-  return (roster ?? []).map(e => ({ name: playerName(e), goals: playerGoals(e) }));
+  return (roster ?? []).map(e => ({ name: playerName(e), goals: playerGoals(e), ownGoals: playerOwnGoals(e) }));
 }
 
 export function EditMatchModal({ match, season, onClose }: Props) {
@@ -53,16 +53,20 @@ export function EditMatchModal({ match, season, onClose }: Props) {
     [home, away],
   );
 
-  const totalHomeGoals = home.reduce((s, p) => s + (p.goals ?? 0), 0);
-  const totalAwayGoals = away.reduce((s, p) => s + (p.goals ?? 0), 0);
+  const homeFieldGoals = home.reduce((s, p) => s + (p.goals ?? 0), 0);
+  const awayFieldGoals = away.reduce((s, p) => s + (p.goals ?? 0), 0);
+  const homeOwnGoals = home.reduce((s, p) => s + (p.ownGoals ?? 0), 0);
+  const awayOwnGoals = away.reduce((s, p) => s + (p.ownGoals ?? 0), 0);
+  const homeExpected = homeFieldGoals + awayOwnGoals;
+  const awayExpected = awayFieldGoals + homeOwnGoals;
 
   function addToHome(name: string) {
     if (home.some(p => p.name === name)) return;
-    setHome([...home, { name, goals: 0 }]);
+    setHome([...home, { name, goals: 0, ownGoals: 0 }]);
   }
   function addToAway(name: string) {
     if (away.some(p => p.name === name)) return;
-    setAway([...away, { name, goals: 0 }]);
+    setAway([...away, { name, goals: 0, ownGoals: 0 }]);
   }
   function removeFromHome(name: string) {
     setHome(home.filter(p => p.name !== name));
@@ -77,6 +81,12 @@ export function EditMatchModal({ match, season, onClose }: Props) {
   }
   function setAwayGoals(name: string, goals: number) {
     setAway(away.map(p => (p.name === name ? { ...p, goals: Math.max(0, goals) } : p)));
+  }
+  function setHomeOG(name: string, og: number) {
+    setHome(home.map(p => (p.name === name ? { ...p, ownGoals: Math.max(0, og) } : p)));
+  }
+  function setAwayOG(name: string, og: number) {
+    setAway(away.map(p => (p.name === name ? { ...p, ownGoals: Math.max(0, og) } : p)));
   }
   function addNewToHome() {
     const n = newName.trim();
@@ -177,10 +187,11 @@ export function EditMatchModal({ match, season, onClose }: Props) {
                   <TeamRoster
                     team={homeTeam}
                     players={home}
-                    goalTotal={totalHomeGoals}
+                    goalTotal={homeExpected}
                     expected={homeScore ? parseInt(homeScore, 10) : null}
                     onRemove={removeFromHome}
                     onGoals={setHomeGoals}
+                    onOwnGoals={setHomeOG}
                     arrowSide="right"
                   />
                   <PoolColumn
@@ -197,10 +208,11 @@ export function EditMatchModal({ match, season, onClose }: Props) {
                   <TeamRoster
                     team={awayTeam}
                     players={away}
-                    goalTotal={totalAwayGoals}
+                    goalTotal={awayExpected}
                     expected={awayScore ? parseInt(awayScore, 10) : null}
                     onRemove={removeFromAway}
                     onGoals={setAwayGoals}
+                    onOwnGoals={setAwayOG}
                     arrowSide="left"
                   />
                 </div>
@@ -243,7 +255,7 @@ export function EditMatchModal({ match, season, onClose }: Props) {
 }
 
 function TeamRoster({
-  team, players, goalTotal, expected, onRemove, onGoals, arrowSide,
+  team, players, goalTotal, expected, onRemove, onGoals, onOwnGoals, arrowSide,
 }: {
   team: Team;
   players: MatchPlayer[];
@@ -251,6 +263,7 @@ function TeamRoster({
   expected: number | null;
   onRemove: (name: string) => void;
   onGoals: (name: string, goals: number) => void;
+  onOwnGoals: (name: string, og: number) => void;
   arrowSide: 'left' | 'right';
 }) {
   const mismatch = expected !== null && goalTotal !== expected;
@@ -265,13 +278,18 @@ function TeamRoster({
           {goalTotal} ⚽{expected !== null ? ` / ${expected}` : ''}
         </span>
       </div>
-      <div className="max-h-72 overflow-y-auto p-2">
+      <div className="grid grid-cols-[1fr_36px_36px] items-center gap-1 px-3 py-1 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
+        <span />
+        <span className="text-center" title="Golos">⚽</span>
+        <span className="text-center" title="Auto-golos">AG</span>
+      </div>
+      <div className="max-h-72 overflow-y-auto px-2 pb-2">
         {players.length === 0 && (
           <div className="p-3 text-center text-xs text-slate-400">Sem jogadores</div>
         )}
         <ul className="space-y-1">
           {players.map(p => (
-            <li key={p.name} className="flex items-center gap-1.5 rounded-md bg-white px-2 py-1 text-xs shadow-sm ring-1 ring-slate-200">
+            <li key={p.name} className="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-xs shadow-sm ring-1 ring-slate-200">
               {arrowSide === 'left' && (
                 <RemoveArrow direction="right" onClick={() => onRemove(p.name)} />
               )}
@@ -279,8 +297,19 @@ function TeamRoster({
               <input
                 type="number" min="0" value={p.goals ?? 0}
                 onChange={e => onGoals(p.name, parseInt(e.target.value || '0', 10))}
-                className="h-7 w-12 rounded-md border border-slate-300 text-center text-sm font-bold focus:border-brand-red focus:outline-none"
+                className="h-7 w-9 rounded-md border border-slate-300 text-center text-sm font-bold focus:border-brand-red focus:outline-none"
                 aria-label={`Golos de ${p.name}`}
+              />
+              <input
+                type="number" min="0" value={p.ownGoals ?? 0}
+                onChange={e => onOwnGoals(p.name, parseInt(e.target.value || '0', 10))}
+                className={
+                  'h-7 w-9 rounded-md border text-center text-sm font-bold focus:outline-none ' +
+                  ((p.ownGoals ?? 0) > 0
+                    ? 'border-rose-400 bg-rose-50 text-rose-700 focus:border-rose-500'
+                    : 'border-slate-300 text-slate-700 focus:border-brand-red')
+                }
+                aria-label={`Auto-golos de ${p.name}`}
               />
               {arrowSide === 'right' && (
                 <RemoveArrow direction="left" onClick={() => onRemove(p.name)} />

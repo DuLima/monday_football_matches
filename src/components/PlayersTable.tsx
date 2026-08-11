@@ -15,6 +15,7 @@ export function PlayersTable({ season }: { season: Season }) {
               <Th align="left">Jogos</Th>
               <Th align="left">Equipa(s)</Th>
               <Th align="left">Golos</Th>
+              <Th align="left">A. Golos</Th>
               <Th align="left">MOTM</Th>
               <Th align="left">Vitórias</Th>
               <Th align="left">Empates</Th>
@@ -55,6 +56,13 @@ export function PlayersTable({ season }: { season: Season }) {
                     ) : <span className="text-slate-300">—</span>}
                   </Td>
                   <Td align="left">
+                    {p.ownGoals > 0 ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700" title="Auto-golos">
+                        {p.ownGoals} AG
+                      </span>
+                    ) : <span className="text-slate-300">—</span>}
+                  </Td>
+                  <Td align="left">
                     {p.motm > 0 ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
                         ⭐ {p.motm}
@@ -70,7 +78,7 @@ export function PlayersTable({ season }: { season: Season }) {
             })}
             {players.length === 0 && (
               <tr>
-                <td colSpan={9} className="p-6 text-center text-slate-500">Sem jogadores registados.</td>
+                <td colSpan={10} className="p-6 text-center text-slate-500">Sem jogadores registados.</td>
               </tr>
             )}
           </tbody>
