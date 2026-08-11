@@ -85,7 +85,26 @@ const matches: Match[] = [
   played('m24', '2026-06-29', 4, 4, 'Avante'),
 
   played('m25', '2026-07-13', 10, 7),
-  played('m26', '2026-07-20', 4, 6, 'Garcia'),
+  played('m26', '2026-07-20', 4, 6, 'Garcia', {
+    players: {
+      chiti: [
+        'Avante', 'Vinicius',
+        { name: 'Diogo Massano', goals: 1 },
+        { name: 'Luis Chiti', goals: 2 },
+        { name: 'Duarte Lima', goals: 1 },
+        'Pedro Martinho', 'Gonçalo Massano', 'Anderson Sá',
+      ],
+      grilo: [
+        'José (GK)',
+        { name: 'Peres', goals: 1 },
+        { name: 'Tempero', goals: 1 },
+        { name: 'Garcia', goals: 3 },
+        'Wilson Neto', 'João Tiago',
+        { name: 'Diogo Correia', goals: 1 },
+        'Filipe Oliveira',
+      ],
+    },
+  }),
   cancelled('c03', '2026-07-06'),
   cancelled('c04', '2026-07-27'),
 

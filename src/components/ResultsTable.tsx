@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Match, Season, TeamId } from '../data/types';
+import { playerGoals, playerName } from '../data/types';
 import { formatDate } from '../lib/format';
 import { isPlayed } from '../lib/stats';
 
@@ -65,18 +66,27 @@ function MatchDetail({ match, season }: { match: Match; season: Season }) {
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {players.length === 0 && <span className="text-xs text-slate-400">Sem jogadores registados</span>}
-                {players.map(name => (
-                  <span
-                    key={name}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
-                    {name}
-                    {match.motm === name && (
-                      <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">⭐ MOTM</span>
-                    )}
-                  </span>
-                ))}
+                {players.map(entry => {
+                  const name = playerName(entry);
+                  const goals = playerGoals(entry);
+                  return (
+                    <span
+                      key={name}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm"
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
+                      {name}
+                      {goals > 0 && (
+                        <span className="inline-flex items-center gap-0.5 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-700">
+                          {goals} ⚽
+                        </span>
+                      )}
+                      {match.motm === name && (
+                        <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">⭐ MOTM</span>
+                      )}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           );

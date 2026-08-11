@@ -11,6 +11,9 @@ export type Team = {
 
 export type MatchStatus = 'played' | 'cancelled' | 'scheduled';
 
+export type MatchPlayer = { name: string; goals?: number };
+export type PlayerEntry = string | MatchPlayer;
+
 export type Match = {
   id: string;
   date: string;
@@ -20,10 +23,17 @@ export type Match = {
   homeScore?: number;
   awayScore?: number;
   venue?: string;
-  players?: Partial<Record<TeamId, string[]>>;
+  players?: Partial<Record<TeamId, PlayerEntry[]>>;
   goalkeeper?: Partial<Record<TeamId, string>>;
   motm?: string;
 };
+
+export function playerName(p: PlayerEntry): string {
+  return typeof p === 'string' ? p : p.name;
+}
+export function playerGoals(p: PlayerEntry): number {
+  return typeof p === 'string' ? 0 : (p.goals ?? 0);
+}
 
 export type Season = {
   year: number;

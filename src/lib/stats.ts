@@ -1,4 +1,5 @@
 import type { Match, Season, TeamId } from '../data/types';
+import { playerGoals, playerName } from '../data/types';
 import { monthKey, monthLabel } from './format';
 
 export type MatchOutcome = 'V' | 'E' | 'D';
@@ -217,6 +218,7 @@ export type PlayerStat = {
   draws: number;
   losses: number;
   winPct: number;
+  goals: number;
 };
 
 export function playerStats(season: Season): PlayerStat[] {
@@ -226,17 +228,20 @@ export function playerStats(season: Season): PlayerStat[] {
     for (const team of Object.keys(m.players) as TeamId[]) {
       const roster = m.players[team] ?? [];
       const outcome = isPlayed(m) ? outcomeFor(team, m) : null;
-      for (const name of roster) {
-        const entry = map.get(name) ?? {
-          name, games: 0, perTeam: {}, motm: 0, wins: 0, draws: 0, losses: 0, winPct: 0,
+      for (const entry of roster) {
+        const name = playerName(entry);
+        const goals = playerGoals(entry);
+        const stat = map.get(name) ?? {
+          name, games: 0, perTeam: {}, motm: 0, wins: 0, draws: 0, losses: 0, winPct: 0, goals: 0,
         };
-        entry.games += 1;
-        entry.perTeam[team] = (entry.perTeam[team] ?? 0) + 1;
-        if (outcome === 'V') entry.wins++;
-        else if (outcome === 'E') entry.draws++;
-        else if (outcome === 'D') entry.losses++;
-        if (m.motm === name) entry.motm++;
-        map.set(name, entry);
+        stat.games += 1;
+        stat.perTeam[team] = (stat.perTeam[team] ?? 0) + 1;
+        stat.goals += goals;
+        if (outcome === 'V') stat.wins++;
+        else if (outcome === 'E') stat.draws++;
+        else if (outcome === 'D') stat.losses++;
+        if (m.motm === name) stat.motm++;
+        map.set(name, stat);
       }
     }
   }
