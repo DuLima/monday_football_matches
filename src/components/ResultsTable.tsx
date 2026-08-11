@@ -1,0 +1,92 @@
+import { useState } from 'react';
+import type { Match, Season, TeamId } from '../data/types';
+import { formatDate } from '../lib/format';
+import { isPlayed } from '../lib/stats';
+
+export function ResultsTable({ season }: { season: Season }) {
+  const rows = season.matches
+    .filter(isPlayed)
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  const [openId, setOpenId] = useState<string | null>(rows[0]?.id ?? null);
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="grid grid-cols-[110px_1fr_120px_1fr_40px] items-center bg-[#0b4d1f] px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white">
+        <div>Data</div>
+        <div>Equipa da Casa</div>
+        <div className="text-center">Resultado</div>
+        <div>Equipa Visitante</div>
+        <div />
+      </div>
+      <ul className="divide-y divide-slate-100">
+        {rows.map(m => {
+          const isOpen = openId === m.id;
+          return (
+            <li key={m.id} className={isOpen ? 'bg-emerald-50/60' : ''}>
+              <button
+                type="button"
+                onClick={() => setOpenId(isOpen ? null : m.id)}
+                className="grid w-full grid-cols-[110px_1fr_120px_1fr_40px] items-center px-4 py-3 text-left text-sm hover:bg-slate-50"
+              >
+                <div className="text-slate-600">{formatDate(m.date)}</div>
+                <div className="font-medium text-slate-800">{season.teams[m.homeTeam].name}</div>
+                <div className="text-center text-base font-bold text-slate-900">
+                  {m.homeScore} <span className="mx-1 text-slate-400">–</span> {m.awayScore}
+                </div>
+                <div className="font-medium text-slate-800">{season.teams[m.awayTeam].name}</div>
+                <div className="text-right text-slate-400">{isOpen ? '▲' : '▼'}</div>
+              </button>
+              {isOpen && <MatchDetail match={m} season={season} />}
+            </li>
+          );
+        })}
+        {rows.length === 0 && (
+          <li className="p-6 text-center text-slate-500">Sem resultados registados.</li>
+        )}
+      </ul>
+    </div>
+  );
+}
+
+function MatchDetail({ match, season }: { match: Match; season: Season }) {
+  const teams: TeamId[] = [match.homeTeam, match.awayTeam];
+  return (
+    <div className="border-t border-emerald-100 bg-emerald-50/40 px-6 py-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {teams.map(t => {
+          const team = season.teams[t];
+          const players = match.players?.[t] ?? [];
+          return (
+            <div key={t}>
+              <div className="mb-2 inline-block rounded-md px-3 py-1 text-xs font-bold text-white" style={{ backgroundColor: team.color }}>
+                {team.name}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {players.length === 0 && <span className="text-xs text-slate-400">Sem jogadores registados</span>}
+                {players.map(name => (
+                  <span
+                    key={name}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
+                    {name}
+                    {match.motm === name && (
+                      <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">⭐ MOTM</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {match.motm && (
+        <div className="mt-4 rounded-lg bg-amber-50 py-2 text-center text-sm text-amber-900 ring-1 ring-amber-200">
+          ⭐ Man of the Match: <span className="font-bold">{match.motm}</span>
+        </div>
+      )}
+    </div>
+  );
+}
