@@ -1,0 +1,20 @@
+export function WandBallIcon({ size = 40 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 64 64" width={size} height={size} xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Segundas Mágicas">
+      <line x1="14" y1="50" x2="40" y2="24" stroke="#7c5a3a" strokeWidth="5" strokeLinecap="round" />
+      <line x1="14" y1="50" x2="40" y2="24" stroke="#4a3016" strokeWidth="1" strokeDasharray="1 2.5" strokeLinecap="round" />
+      <circle cx="46" cy="18" r="15" fill="#ffffff" stroke="#0b4d1f" strokeWidth="2.5" />
+      <polygon points="46,10 53,15 50,23 42,23 39,15" fill="#0b4d1f" />
+      <path d="M35 20 L46 24 L57 20" stroke="#0b4d1f" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      <path
+        d="M52 6 l2 -3 l0.4 4 l3.6 0.5 l-3 2 l2 3.6 l-3.5 -2 l-3.5 2.4 l2 -3.6 l-3.2 -2.4 l3.6 -0.2 z"
+        fill="#ffd54a"
+        stroke="#a67c00"
+        strokeWidth="0.5"
+      />
+      <circle cx="8" cy="30" r="1.4" fill="#ffd54a" />
+      <circle cx="26" cy="14" r="1.4" fill="#ffd54a" />
+      <circle cx="32" cy="52" r="1.2" fill="#ffd54a" />
+    </svg>
+  );
+}

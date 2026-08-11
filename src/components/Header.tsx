@@ -1,3 +1,5 @@
+import { WandBallIcon } from './icons/WandBallIcon';
+
 export type TabId = 'stats' | 'charts' | 'monthly' | 'players' | 'results';
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
@@ -18,8 +20,8 @@ export function Header({ active, onChange }: Props) {
     <header className="sticky top-0 z-30 overflow-hidden bg-gradient-to-b from-[#073615] to-[#0b4d1f] shadow-md">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 overflow-hidden px-4 py-2">
         <div className="flex items-center gap-3 pr-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0e6b2b] text-2xl font-bold text-white shadow-inner ring-2 ring-lime-400/40">
-            ⚽
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0e6b2b] shadow-inner ring-2 ring-lime-400/40">
+            <WandBallIcon size={40} />
           </div>
           <div className="hidden text-white sm:block">
             <div className="text-xs font-semibold uppercase tracking-widest text-lime-300">Segundas</div>
