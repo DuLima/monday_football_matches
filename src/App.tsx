@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { season } from './data/season';
 import { Header, type TabId } from './components/Header';
 import { NextGameCard } from './components/NextGameCard';
 import { SeasonProgressCard } from './components/SeasonProgressCard';
@@ -10,8 +9,21 @@ import { MonthlyStats } from './components/MonthlyStats';
 import { PlayersTable } from './components/PlayersTable';
 import { ResultsTable } from './components/ResultsTable';
 import { nextMatch } from './lib/stats';
+import { AuthProvider } from './firebase/auth';
+import { SeasonProvider, useSeason } from './firebase/season';
 
 function App() {
+  return (
+    <AuthProvider>
+      <SeasonProvider>
+        <AppInner />
+      </SeasonProvider>
+    </AuthProvider>
+  );
+}
+
+function AppInner() {
+  const { season } = useSeason();
   const [tab, setTab] = useState<TabId>('stats');
   const today = new Date();
   const next = nextMatch(season, today);

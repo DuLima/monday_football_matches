@@ -1,4 +1,5 @@
 import { WandBallIcon } from './icons/WandBallIcon';
+import { OwnerBar } from './OwnerBar';
 
 export type TabId = 'stats' | 'charts' | 'monthly' | 'players' | 'results';
 
@@ -27,6 +28,9 @@ export function Header({ active, onChange }: Props) {
             <div className="text-xs font-semibold uppercase tracking-widest text-lime-300">Segundas</div>
             <div className="-mt-0.5 text-lg font-black tracking-wider">Mágicas</div>
           </div>
+        </div>
+        <div className="ml-auto flex items-center gap-2 sm:order-3">
+          <OwnerBar />
         </div>
         <nav className="flex flex-1 flex-wrap items-center gap-1 overflow-hidden">
           {TABS.map(tab => {

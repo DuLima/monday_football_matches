@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import type { Match, Season, TeamId } from '../data/types';
 import { playerGoals, playerName } from '../data/types';
+import { useAuth } from '../firebase/auth';
 import { formatDate } from '../lib/format';
 import { isPlayed } from '../lib/stats';
+import { EditMatchModal } from './EditMatchModal';
 
 export function ResultsTable({ season }: { season: Season }) {
+  const { isOwner } = useAuth();
   const rows = season.matches
-    .filter(isPlayed)
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
 
-  const [openId, setOpenId] = useState<string | null>(rows[0]?.id ?? null);
+  const [openId, setOpenId] = useState<string | null>(rows.find(isPlayed)?.id ?? null);
+  const [editing, setEditing] = useState<Match | null>(null);
 
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -24,31 +27,74 @@ export function ResultsTable({ season }: { season: Season }) {
       <ul className="divide-y divide-slate-100">
         {rows.map(m => {
           const isOpen = openId === m.id;
+          const played = isPlayed(m);
           return (
             <li key={m.id} className={isOpen ? 'bg-emerald-50/60' : ''}>
-              <button
-                type="button"
-                onClick={() => setOpenId(isOpen ? null : m.id)}
-                className="grid w-full grid-cols-[110px_1fr_120px_1fr_40px] items-center px-4 py-3 text-left text-sm hover:bg-slate-50"
-              >
-                <div className="text-slate-600">{formatDate(m.date)}</div>
+              <div className="grid w-full grid-cols-[110px_1fr_120px_1fr_40px] items-center px-4 py-3 text-sm">
+                <button
+                  type="button"
+                  onClick={() => played && setOpenId(isOpen ? null : m.id)}
+                  className={'text-left text-slate-600 ' + (played ? 'cursor-pointer hover:underline' : 'cursor-default')}
+                >
+                  {formatDate(m.date)}
+                </button>
                 <div className="font-medium text-slate-800">{season.teams[m.homeTeam].name}</div>
-                <div className="text-center text-base font-bold text-slate-900">
-                  {m.homeScore} <span className="mx-1 text-slate-400">–</span> {m.awayScore}
+                <div className="text-center">
+                  {played ? (
+                    <span className="text-base font-bold text-slate-900">
+                      {m.homeScore} <span className="mx-1 text-slate-400">–</span> {m.awayScore}
+                    </span>
+                  ) : (
+                    <StatusPill status={m.status} />
+                  )}
                 </div>
                 <div className="font-medium text-slate-800">{season.teams[m.awayTeam].name}</div>
-                <div className="text-right text-slate-400">{isOpen ? '▲' : '▼'}</div>
-              </button>
-              {isOpen && <MatchDetail match={m} season={season} />}
+                <div className="flex items-center justify-end gap-1">
+                  {isOwner && (
+                    <button
+                      type="button"
+                      onClick={() => setEditing(m)}
+                      className="rounded-md bg-emerald-600 px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm hover:bg-emerald-700"
+                    >
+                      Editar
+                    </button>
+                  )}
+                  {played && (
+                    <button
+                      type="button"
+                      onClick={() => setOpenId(isOpen ? null : m.id)}
+                      className="rounded-md p-1 text-slate-400 hover:bg-slate-100"
+                      aria-label="Expandir"
+                    >
+                      {isOpen ? '▲' : '▼'}
+                    </button>
+                  )}
+                </div>
+              </div>
+              {isOpen && played && <MatchDetail match={m} season={season} />}
             </li>
           );
         })}
         {rows.length === 0 && (
-          <li className="p-6 text-center text-slate-500">Sem resultados registados.</li>
+          <li className="p-6 text-center text-slate-500">Sem jogos registados.</li>
         )}
       </ul>
+
+      {editing && (
+        <EditMatchModal match={editing} season={season} onClose={() => setEditing(null)} />
+      )}
     </div>
   );
+}
+
+function StatusPill({ status }: { status: Match['status'] }) {
+  if (status === 'cancelled') {
+    return <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-semibold text-rose-700">Cancelado</span>;
+  }
+  if (status === 'scheduled') {
+    return <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">Agendado</span>;
+  }
+  return null;
 }
 
 function MatchDetail({ match, season }: { match: Match; season: Season }) {

@@ -1,0 +1,22 @@
+rules_version = '2';
+
+// Paste these rules in the Firebase console under Firestore → Rules.
+// Set OWNER_EMAIL below to your Google account. Anyone can read the season;
+// only the owner can write.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Change this to your owner email.
+    function OWNER_EMAIL() {
+      return "duarte.lima@pst.asseco.com";
+    }
+
+    match /seasons/{seasonId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.email != null
+                   && request.auth.token.email.lower() == OWNER_EMAIL();
+    }
+  }
+}
