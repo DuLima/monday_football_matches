@@ -8,7 +8,9 @@ import { EditMatchModal } from './EditMatchModal';
 
 export function ResultsTable({ season }: { season: Season }) {
   const { isOwner } = useAuth();
+  const todayStr = new Date().toISOString().slice(0, 10);
   const rows = season.matches
+    .filter(m => m.date <= todayStr)
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
 
