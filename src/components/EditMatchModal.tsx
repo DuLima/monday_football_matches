@@ -140,7 +140,7 @@ export function EditMatchModal({ match, season, onClose }: Props) {
                   className={
                     'rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-slate-200 ' +
                     (status === s
-                      ? 'bg-emerald-600 text-white ring-emerald-700'
+                      ? 'bg-brand-red text-white ring-rose-700'
                       : 'bg-white text-slate-700 hover:bg-slate-50')
                   }
                 >
@@ -159,13 +159,13 @@ export function EditMatchModal({ match, season, onClose }: Props) {
                   <input
                     type="number" min="0" value={homeScore}
                     onChange={e => setHomeScore(e.target.value)}
-                    className="h-12 w-16 rounded-lg border border-slate-300 text-center text-xl font-bold focus:border-emerald-500 focus:outline-none"
+                    className="h-12 w-16 rounded-lg border border-slate-300 text-center text-xl font-bold focus:border-brand-red focus:outline-none"
                   />
                   <span className="text-slate-400">–</span>
                   <input
                     type="number" min="0" value={awayScore}
                     onChange={e => setAwayScore(e.target.value)}
-                    className="h-12 w-16 rounded-lg border border-slate-300 text-center text-xl font-bold focus:border-emerald-500 focus:outline-none"
+                    className="h-12 w-16 rounded-lg border border-slate-300 text-center text-xl font-bold focus:border-brand-red focus:outline-none"
                   />
                   <div className="w-40 text-sm font-semibold" style={{ color: awayTeam.color }}>{awayTeam.name}</div>
                 </div>
@@ -211,7 +211,7 @@ export function EditMatchModal({ match, season, onClose }: Props) {
                 <select
                   value={motm}
                   onChange={e => setMotm(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
                 >
                   <option value="">— nenhum —</option>
                   {allInMatch.map(n => <option key={n} value={n}>{n}</option>)}
@@ -232,7 +232,7 @@ export function EditMatchModal({ match, season, onClose }: Props) {
           </button>
           <button
             type="button" onClick={onSave} disabled={saving}
-            className="rounded-md bg-emerald-600 px-5 py-2 text-sm font-bold text-white shadow hover:bg-emerald-700 disabled:opacity-60"
+            className="rounded-md bg-brand-red px-5 py-2 text-sm font-bold text-white shadow hover:bg-rose-700 disabled:opacity-60"
           >
             {saving ? 'A guardar…' : 'Guardar'}
           </button>
@@ -279,7 +279,7 @@ function TeamRoster({
               <input
                 type="number" min="0" value={p.goals ?? 0}
                 onChange={e => onGoals(p.name, parseInt(e.target.value || '0', 10))}
-                className="h-7 w-12 rounded-md border border-slate-300 text-center text-sm font-bold focus:border-emerald-500 focus:outline-none"
+                className="h-7 w-12 rounded-md border border-slate-300 text-center text-sm font-bold focus:border-brand-red focus:outline-none"
                 aria-label={`Golos de ${p.name}`}
               />
               {arrowSide === 'right' && (
@@ -328,7 +328,7 @@ function PoolColumn({
           type="text" value={newName}
           onChange={e => onNewName(e.target.value)}
           placeholder="Novo jogador…"
-          className="mb-1 w-full rounded-md border border-slate-300 px-2 py-1 text-xs focus:border-emerald-500 focus:outline-none"
+          className="mb-1 w-full rounded-md border border-slate-300 px-2 py-1 text-xs focus:border-brand-red focus:outline-none"
         />
         <div className="flex gap-1">
           <button

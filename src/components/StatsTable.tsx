@@ -16,10 +16,10 @@ export function StatsTable({ season, matches, showForm = true }: Props) {
   const ranked = [grilo, chiti].sort((a, b) => b.points - a.points || b.goalDiff - a.goalDiff);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
       <div>
         <table className="w-full text-xs sm:text-sm">
-          <thead className="bg-[#0b4d1f] text-white">
+          <thead className="bg-brand-dark text-white">
             <tr>
               <Th align="left" className="pl-5">Equipa</Th>
               <Th>J</Th>

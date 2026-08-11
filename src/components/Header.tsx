@@ -3,12 +3,12 @@ import { OwnerBar } from './OwnerBar';
 
 export type TabId = 'stats' | 'charts' | 'monthly' | 'players' | 'results';
 
-const TABS: { id: TabId; label: string; icon: string }[] = [
-  { id: 'stats',    label: 'Estatísticas', icon: '📊' },
-  { id: 'charts',   label: 'Gráficos',     icon: '📈' },
-  { id: 'monthly',  label: 'Mensal',       icon: '🗓️' },
-  { id: 'players',  label: 'Jogadores',    icon: '👤' },
-  { id: 'results',  label: 'Resultados',   icon: '📋' },
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'stats',    label: 'Estatísticas' },
+  { id: 'charts',   label: 'Gráficos' },
+  { id: 'monthly',  label: 'Mensal' },
+  { id: 'players',  label: 'Jogadores' },
+  { id: 'results',  label: 'Resultados' },
 ];
 
 type Props = {
@@ -18,37 +18,38 @@ type Props = {
 
 export function Header({ active, onChange }: Props) {
   return (
-    <header className="sticky top-0 z-30 overflow-hidden bg-gradient-to-b from-[#073615] to-[#0b4d1f] shadow-md">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 overflow-hidden px-4 py-2">
-        <div className="flex items-center gap-3 pr-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0e6b2b] shadow-inner ring-2 ring-lime-400/40">
-            <WandBallIcon size={40} />
+    <header className="sticky top-0 z-30 bg-page-cream/85 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-red shadow-sm ring-1 ring-brand-red-ring">
+            <WandBallIcon size={30} />
           </div>
-          <div className="hidden text-white sm:block">
-            <div className="text-xs font-semibold uppercase tracking-widest text-lime-300">Segundas</div>
-            <div className="-mt-0.5 text-lg font-black tracking-wider">Mágicas</div>
+          <div className="text-brand-dark">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-red">Segundas</div>
+            <div className="-mt-0.5 text-base font-bold tracking-tight">Mágicas</div>
           </div>
         </div>
-        <div className="ml-auto flex items-center gap-2 sm:order-3">
+
+        <div className="ml-auto flex items-center gap-2 order-3 sm:order-none">
           <OwnerBar />
         </div>
-        <nav className="flex flex-1 flex-wrap items-center gap-1 overflow-hidden">
+
+        <nav className="flex w-full flex-wrap items-center gap-1 rounded-full border border-slate-200 bg-white p-1 shadow-sm sm:ml-4 sm:w-auto">
           {TABS.map(tab => {
             const isActive = tab.id === active;
             return (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => onChange(tab.id)}
                 className={
-                  'group relative flex items-center gap-1.5 whitespace-nowrap rounded-t-md px-2.5 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:py-3 sm:text-sm ' +
+                  'whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:text-sm ' +
                   (isActive
-                    ? 'bg-white/5 text-lime-300 ring-1 ring-lime-400/40'
-                    : 'text-white/80 hover:bg-white/5 hover:text-white')
+                    ? 'bg-brand-red text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-brand-red-soft hover:text-brand-red')
                 }
               >
-                <span>{tab.icon}</span>
-                <span>{tab.label}</span>
-                {isActive && <span className="absolute -bottom-[2px] left-0 h-[3px] w-full rounded-full bg-lime-400" />}
+                {tab.label}
               </button>
             );
           })}

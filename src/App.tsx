@@ -29,7 +29,7 @@ function AppInner() {
   const next = nextMatch(season, today);
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-page-cream">
       <Header active={tab} onChange={setTab} />
 
       <main className="mx-auto max-w-7xl px-4 py-6">
@@ -92,9 +92,9 @@ function AppInner() {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="relative inline-block pb-1 text-2xl font-bold text-slate-800">
+    <h2 className="relative inline-block pb-1 text-2xl font-bold text-brand-dark">
       {children}
-      <span className="absolute -bottom-0.5 left-0 h-1 w-16 rounded-full bg-lime-500" />
+      <span className="absolute -bottom-0.5 left-0 h-1 w-16 rounded-full bg-brand-red" />
     </h2>
   );
 }

@@ -6,12 +6,12 @@ export function OwnerBar() {
   if (loading) return null;
 
   return (
-    <div className="flex items-center gap-2 text-xs text-white/80">
+    <div className="flex items-center gap-2 text-xs">
       {!user && (
         <button
           type="button"
           onClick={() => signIn().catch(err => alert('Erro ao entrar: ' + err.message))}
-          className="rounded-md bg-white/10 px-3 py-1.5 font-semibold text-white ring-1 ring-white/20 hover:bg-white/15"
+          className="rounded-full bg-brand-red px-3 py-1.5 font-semibold text-white shadow-sm ring-1 ring-brand-red-ring hover:bg-rose-700"
         >
           Entrar
         </button>
@@ -21,16 +21,16 @@ export function OwnerBar() {
           <span
             className={
               'rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ' +
-              (isOwner ? 'bg-lime-400/20 text-lime-300 ring-1 ring-lime-400/40' : 'bg-white/10 text-white/70')
+              (isOwner ? 'bg-brand-red-soft text-brand-red ring-1 ring-brand-red-ring' : 'bg-slate-100 text-slate-600')
             }
           >
             {isOwner ? 'Modo edição' : 'Só leitura'}
           </span>
-          <span className="hidden sm:inline text-white/70">{user.email}</span>
+          <span className="hidden text-slate-500 sm:inline">{user.email}</span>
           <button
             type="button"
             onClick={() => signOutNow()}
-            className="rounded-md bg-white/10 px-2 py-1 text-white/80 ring-1 ring-white/20 hover:bg-white/15"
+            className="rounded-full bg-white px-3 py-1 text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50"
           >
             Sair
           </button>

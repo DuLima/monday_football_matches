@@ -99,14 +99,14 @@ export function RankingsGrid({ season }: { season: Season }) {
 }
 
 const BORDER: Record<string, string> = {
-  emerald: 'border-t-emerald-500',
-  rose: 'border-t-rose-500',
-  slate: 'border-t-slate-500',
+  emerald: 'border-l-brand-red',
+  rose: 'border-l-rose-400',
+  slate: 'border-l-slate-300',
 };
 
 function Card({ children, title, icon, border }: { children: React.ReactNode; title: string; icon: string; border: 'emerald' | 'rose' | 'slate' }) {
   return (
-    <div className={`rounded-xl border-t-4 ${BORDER[border]} bg-white p-5 text-center shadow-sm`}>
+    <div className={`rounded-2xl border-l-4 ${BORDER[border]} bg-white p-5 text-center shadow-sm ring-1 ring-slate-100`}>
       <div className="text-3xl">{icon}</div>
       <div className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-slate-500">{title}</div>
       <div className="mt-2">{children}</div>
@@ -114,7 +114,7 @@ function Card({ children, title, icon, border }: { children: React.ReactNode; ti
   );
 }
 function Value({ children }: { children: React.ReactNode }) {
-  return <div className="text-lg font-black text-emerald-800">{children}</div>;
+  return <div className="text-lg font-black text-brand-dark">{children}</div>;
 }
 function Sub({ children }: { children: React.ReactNode }) {
   return <div className="mt-1 text-xs text-slate-500">{children}</div>;

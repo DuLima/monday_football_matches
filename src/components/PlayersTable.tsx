@@ -6,10 +6,10 @@ export function PlayersTable({ season }: { season: Season }) {
   const orderedTeams: TeamId[] = ['chiti', 'grilo'];
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
       <div>
         <table className="w-full text-xs sm:text-sm">
-          <thead className="bg-[#0b4d1f] text-white">
+          <thead className="bg-brand-dark text-white">
             <tr>
               <Th align="left" className="pl-5">Jogador</Th>
               <Th align="left">Jogos</Th>

@@ -18,8 +18,8 @@ export function ResultsTable({ season }: { season: Season }) {
   const [editing, setEditing] = useState<Match | null>(null);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="grid grid-cols-[110px_1fr_120px_1fr_40px] items-center bg-[#0b4d1f] px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white">
+    <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div className="grid grid-cols-[110px_1fr_120px_1fr_40px] items-center bg-brand-dark px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white">
         <div>Data</div>
         <div>Equipa da Casa</div>
         <div className="text-center">Resultado</div>
@@ -31,7 +31,7 @@ export function ResultsTable({ season }: { season: Season }) {
           const isOpen = openId === m.id;
           const played = isPlayed(m);
           return (
-            <li key={m.id} className={isOpen ? 'bg-emerald-50/60' : ''}>
+            <li key={m.id} className={isOpen ? 'bg-brand-red-soft/60' : ''}>
               <div className="grid w-full grid-cols-[110px_1fr_120px_1fr_40px] items-center px-4 py-3 text-sm">
                 <button
                   type="button"
@@ -56,7 +56,7 @@ export function ResultsTable({ season }: { season: Season }) {
                     <button
                       type="button"
                       onClick={() => setEditing(m)}
-                      className="rounded-md bg-emerald-600 px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm hover:bg-emerald-700"
+                      className="rounded-md bg-brand-red px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm hover:bg-rose-700"
                     >
                       Editar
                     </button>
@@ -102,7 +102,7 @@ function StatusPill({ status }: { status: Match['status'] }) {
 function MatchDetail({ match, season }: { match: Match; season: Season }) {
   const teams: TeamId[] = [match.homeTeam, match.awayTeam];
   return (
-    <div className="border-t border-emerald-100 bg-emerald-50/40 px-6 py-4">
+    <div className="border-t border-brand-red-ring/40 bg-brand-red-soft/40 px-6 py-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {teams.map(t => {
           const team = season.teams[t];
