@@ -35,15 +35,6 @@ const played = (
   ...extras,
 });
 
-const cancelled = (id: string, date: string): Match => ({
-  id,
-  date,
-  status: 'cancelled',
-  homeTeam: CHITI,
-  awayTeam: GRILO,
-  venue: VENUE,
-});
-
 const scheduled = (id: string, date: string): Match => ({
   id,
   date,
@@ -71,12 +62,12 @@ const matches: Match[] = [
   played('m14', '2026-04-06', 9, 6),
   played('m15', '2026-04-13', 11, 8),
   played('m16', '2026-04-27', 7, 5),
-  cancelled('c01', '2026-04-20'),
+  scheduled('c01', '2026-04-20'),
 
   played('m17', '2026-05-04', 9, 6, 'Anderson Sá'),
   played('m18', '2026-05-18', 4, 6),
   played('m19', '2026-05-25', 2, 4),
-  cancelled('c02', '2026-05-11'),
+  scheduled('c02', '2026-05-11'),
 
   played('m20', '2026-06-01', 2, 10),
   played('m21', '2026-06-08', 6, 8),
@@ -105,8 +96,8 @@ const matches: Match[] = [
       ],
     },
   }),
-  cancelled('c03', '2026-07-06'),
-  cancelled('c04', '2026-07-27'),
+  scheduled('c03', '2026-07-06'),
+  scheduled('c04', '2026-07-27'),
 
   scheduled('s01', '2026-08-17'),
   scheduled('s02', '2026-08-24'),
@@ -115,9 +106,9 @@ const matches: Match[] = [
   scheduled('s05', '2026-09-14'),
   scheduled('s06', '2026-09-21'),
   scheduled('s07', '2026-09-28'),
-  cancelled('c05', '2026-08-10'),
-  cancelled('c06', '2026-08-03'),
-  cancelled('c07', '2026-09-10'),
+  scheduled('c05', '2026-08-10'),
+  scheduled('c06', '2026-08-03'),
+  scheduled('c07', '2026-09-10'),
   scheduled('s08', '2026-10-05'),
   scheduled('s09', '2026-10-12'),
   scheduled('s10', '2026-10-19'),

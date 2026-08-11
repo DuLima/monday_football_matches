@@ -14,7 +14,7 @@ export function ResultsTable({ season }: { season: Season }) {
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
 
-  const [openId, setOpenId] = useState<string | null>(rows.find(isPlayed)?.id ?? null);
+  const [openId, setOpenId] = useState<string | null>(rows[0]?.id ?? null);
   const [editing, setEditing] = useState<Match | null>(null);
 
   return (
