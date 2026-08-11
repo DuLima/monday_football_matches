@@ -28,6 +28,7 @@ export function Charts({ season }: { season: Season }) {
       categories: [season.teams.chiti.name, 'Empates', season.teams.grilo.name],
       lineColor: '#e5e7eb',
       tickColor: '#e5e7eb',
+      crosshair: false,
       labels: { style: { color: '#334155', fontSize: '12px' } },
     },
     yAxis: {
@@ -56,6 +57,7 @@ export function Charts({ season }: { season: Season }) {
       categories: [season.teams.chiti.name, season.teams.grilo.name],
       lineColor: '#e5e7eb',
       tickColor: '#e5e7eb',
+      crosshair: false,
       labels: { style: { color: '#334155', fontSize: '12px' } },
     },
     yAxis: {
@@ -90,7 +92,7 @@ export function Charts({ season }: { season: Season }) {
   const monthlyGoals: Highcharts.Options = {
     chart: { ...BASE_CHART, type: 'line', height: 340 },
     title: { text: undefined },
-    xAxis: { categories: monthCategories, labels: { style: { color: '#334155', fontSize: '11px' } } },
+    xAxis: { categories: monthCategories, crosshair: false, labels: { style: { color: '#334155', fontSize: '11px' } } },
     yAxis: {
       title: { text: null },
       gridLineColor: '#e5e7eb',
@@ -127,7 +129,7 @@ export function Charts({ season }: { season: Season }) {
   const monthlyResults: Highcharts.Options = {
     chart: { ...BASE_CHART, type: 'line', height: 340 },
     title: { text: undefined },
-    xAxis: { categories: monthCategories, labels: { style: { color: '#334155', fontSize: '11px' } } },
+    xAxis: { categories: monthCategories, crosshair: false, labels: { style: { color: '#334155', fontSize: '11px' } } },
     yAxis: {
       title: { text: null },
       gridLineColor: '#e5e7eb',
