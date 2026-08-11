@@ -3,7 +3,7 @@ import { groupByMonth, isPlayed } from '../lib/stats';
 import { StatsTable } from './StatsTable';
 
 export function MonthlyStats({ season }: { season: Season }) {
-  const groups = groupByMonth(season.matches.filter(isPlayed));
+  const groups = groupByMonth(season.matches.filter(isPlayed)).slice().reverse();
 
   return (
     <div className="space-y-6">

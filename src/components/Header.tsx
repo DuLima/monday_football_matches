@@ -26,7 +26,7 @@ export function Header({ active, onChange }: Props) {
             <div className="-mt-0.5 text-lg font-black tracking-wider">Mágicas</div>
           </div>
         </div>
-        <nav className="flex flex-1 items-center gap-1 overflow-x-auto">
+        <nav className="flex flex-1 flex-wrap items-center gap-1">
           {TABS.map(tab => {
             const isActive = tab.id === active;
             return (

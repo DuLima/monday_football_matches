@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "date-fns": "^4.4.0",
+    "highcharts": "^13.0.0",
+    "highcharts-react-official": "^3.2.3",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "recharts": "^3.10.1"
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

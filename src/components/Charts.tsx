@@ -1,52 +1,149 @@
-import {
-  Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer,
-  Tooltip, XAxis, YAxis,
-} from 'recharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import type { Season } from '../data/types';
-import { isPlayed, outcomeFor, teamStats, groupByMonth } from '../lib/stats';
-import { monthLabel } from '../lib/format';
+import { groupByMonth, isPlayed, outcomeFor, teamStats } from '../lib/stats';
 
 const COLOR_CHITI = '#c0392b';
 const COLOR_GRILO = '#1f4e78';
 const COLOR_DRAW = '#f5b100';
 const COLOR_TOTAL = '#8e44ad';
 
+const BASE_CHART: Highcharts.ChartOptions = {
+  backgroundColor: 'transparent',
+  style: { fontFamily: 'inherit' },
+  spacingTop: 8,
+  spacingBottom: 8,
+};
+
+const NO_CREDITS = { enabled: false };
+
 export function Charts({ season }: { season: Season }) {
   const chiti = teamStats('chiti', season.matches);
   const grilo = teamStats('grilo', season.matches);
 
-  const wdData = [
-    { name: season.teams.chiti.name, value: chiti.wins, fill: COLOR_CHITI },
-    { name: 'Empates', value: chiti.draws, fill: COLOR_DRAW },
-    { name: season.teams.grilo.name, value: grilo.wins, fill: COLOR_GRILO },
-  ];
-  const goalsData = [
-    { name: season.teams.chiti.name, value: chiti.goalsFor, fill: COLOR_CHITI },
-    { name: season.teams.grilo.name, value: grilo.goalsFor, fill: COLOR_GRILO },
-  ];
+  const winsDraws: Highcharts.Options = {
+    chart: { ...BASE_CHART, type: 'column', height: 320 },
+    title: { text: undefined },
+    xAxis: {
+      categories: [season.teams.chiti.name, 'Empates', season.teams.grilo.name],
+      lineColor: '#e5e7eb',
+      tickColor: '#e5e7eb',
+      labels: { style: { color: '#334155', fontSize: '12px' } },
+    },
+    yAxis: {
+      title: { text: null },
+      gridLineColor: '#e5e7eb',
+      allowDecimals: false,
+      labels: { style: { color: '#334155' } },
+    },
+    legend: { enabled: false },
+    tooltip: { shared: true },
+    credits: NO_CREDITS,
+    plotOptions: { column: { borderRadius: 4, borderWidth: 0 } },
+    series: [{
+      type: 'column',
+      name: 'Total',
+      colorByPoint: true,
+      colors: [COLOR_CHITI, COLOR_DRAW, COLOR_GRILO],
+      data: [chiti.wins, chiti.draws, grilo.wins],
+    }],
+  };
+
+  const goalsChart: Highcharts.Options = {
+    chart: { ...BASE_CHART, type: 'column', height: 320 },
+    title: { text: undefined },
+    xAxis: {
+      categories: [season.teams.chiti.name, season.teams.grilo.name],
+      lineColor: '#e5e7eb',
+      tickColor: '#e5e7eb',
+      labels: { style: { color: '#334155', fontSize: '12px' } },
+    },
+    yAxis: {
+      title: { text: null },
+      gridLineColor: '#e5e7eb',
+      allowDecimals: false,
+      labels: { style: { color: '#334155' } },
+    },
+    legend: { enabled: false },
+    tooltip: { shared: true },
+    credits: NO_CREDITS,
+    plotOptions: { column: { borderRadius: 4, borderWidth: 0 } },
+    series: [{
+      type: 'column',
+      name: 'Golos',
+      colorByPoint: true,
+      colors: [COLOR_CHITI, COLOR_GRILO],
+      data: [chiti.goalsFor, grilo.goalsFor],
+    }],
+  };
 
   const months = groupByMonth(season.matches.filter(isPlayed));
-  const monthlyGoals = months.map(g => {
-    const chi = g.matches.reduce((s, m) => s + (m.homeTeam === 'chiti' ? m.homeScore! : m.awayScore!), 0);
-    const gri = g.matches.reduce((s, m) => s + (m.homeTeam === 'grilo' ? m.homeScore! : m.awayScore!), 0);
-    return {
-      label: g.label,
-      Chiti: chi,
-      Grilo: gri,
-      Total: chi + gri,
-    };
-  });
+  const monthCategories = months.map(g => g.label);
+  const chitiGoalsByMonth = months.map(g =>
+    g.matches.reduce((s, m) => s + (m.homeTeam === 'chiti' ? m.homeScore! : m.awayScore!), 0),
+  );
+  const griloGoalsByMonth = months.map(g =>
+    g.matches.reduce((s, m) => s + (m.homeTeam === 'grilo' ? m.homeScore! : m.awayScore!), 0),
+  );
+  const totalGoalsByMonth = chitiGoalsByMonth.map((v, i) => v + griloGoalsByMonth[i]);
 
-  const monthlyResults = months.map(g => {
-    let chiWins = 0, griWins = 0, draws = 0;
+  const monthlyGoals: Highcharts.Options = {
+    chart: { ...BASE_CHART, type: 'line', height: 340 },
+    title: { text: undefined },
+    xAxis: { categories: monthCategories, labels: { style: { color: '#334155', fontSize: '11px' } } },
+    yAxis: {
+      title: { text: null },
+      gridLineColor: '#e5e7eb',
+      allowDecimals: false,
+      labels: { style: { color: '#334155' } },
+    },
+    legend: { enabled: true, itemStyle: { color: '#334155' } },
+    tooltip: { shared: true },
+    credits: NO_CREDITS,
+    plotOptions: { line: { marker: { radius: 4 } } },
+    series: [
+      { type: 'line', name: season.teams.chiti.name, data: chitiGoalsByMonth, color: COLOR_CHITI, lineWidth: 3 },
+      { type: 'line', name: season.teams.grilo.name, data: griloGoalsByMonth, color: COLOR_GRILO, lineWidth: 3 },
+      { type: 'line', name: 'Total de Golos', data: totalGoalsByMonth, color: COLOR_TOTAL, dashStyle: 'ShortDash', lineWidth: 2 },
+    ],
+  };
+
+  const chitiWinsByMonth: number[] = [];
+  const griloWinsByMonth: number[] = [];
+  const drawsByMonth: number[] = [];
+  for (const g of months) {
+    let cw = 0, gw = 0, dr = 0;
     for (const m of g.matches) {
       const o = outcomeFor('chiti', m);
-      if (o === 'V') chiWins++;
-      else if (o === 'D') griWins++;
-      else if (o === 'E') draws++;
+      if (o === 'V') cw++;
+      else if (o === 'D') gw++;
+      else if (o === 'E') dr++;
     }
-    return { label: g.label, Chiti: chiWins, Grilo: griWins, Empates: draws };
-  });
+    chitiWinsByMonth.push(cw);
+    griloWinsByMonth.push(gw);
+    drawsByMonth.push(dr);
+  }
+
+  const monthlyResults: Highcharts.Options = {
+    chart: { ...BASE_CHART, type: 'line', height: 340 },
+    title: { text: undefined },
+    xAxis: { categories: monthCategories, labels: { style: { color: '#334155', fontSize: '11px' } } },
+    yAxis: {
+      title: { text: null },
+      gridLineColor: '#e5e7eb',
+      allowDecimals: false,
+      labels: { style: { color: '#334155' } },
+    },
+    legend: { enabled: true, itemStyle: { color: '#334155' } },
+    tooltip: { shared: true },
+    credits: NO_CREDITS,
+    plotOptions: { line: { marker: { radius: 4 } } },
+    series: [
+      { type: 'line', name: `Vitórias ${season.teams.chiti.name}`, data: chitiWinsByMonth, color: COLOR_CHITI, lineWidth: 3 },
+      { type: 'line', name: `Vitórias ${season.teams.grilo.name}`, data: griloWinsByMonth, color: COLOR_GRILO, lineWidth: 3 },
+      { type: 'line', name: 'Empates', data: drawsByMonth, color: COLOR_DRAW, dashStyle: 'ShortDash', lineWidth: 2 },
+    ],
+  };
 
   return (
     <div className="space-y-8">
@@ -54,26 +151,10 @@ export function Charts({ season }: { season: Season }) {
         <SectionTitle>Gráficos Gerais</SectionTitle>
         <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Panel title="Vitórias / Empates">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={wdData}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.4} />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <HighchartsReact highcharts={Highcharts} options={winsDraws} />
           </Panel>
           <Panel title="Golos">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={goalsData}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.4} />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <HighchartsReact highcharts={Highcharts} options={goalsChart} />
           </Panel>
         </div>
       </section>
@@ -82,32 +163,10 @@ export function Charts({ season }: { season: Season }) {
         <SectionTitle>Gráficos Mensais</SectionTitle>
         <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Panel title="Golos Marcados por Mês">
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={monthlyGoals}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.4} />
-                <XAxis dataKey="label" tick={{ fontSize: 11 }} angle={-15} textAnchor="end" height={60} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="Chiti" stroke={COLOR_CHITI} strokeWidth={2.5} name={season.teams.chiti.name} />
-                <Line type="monotone" dataKey="Grilo" stroke={COLOR_GRILO} strokeWidth={2.5} name={season.teams.grilo.name} />
-                <Line type="monotone" dataKey="Total" stroke={COLOR_TOTAL} strokeWidth={2} strokeDasharray="5 5" name="Total de Golos" />
-              </LineChart>
-            </ResponsiveContainer>
+            <HighchartsReact highcharts={Highcharts} options={monthlyGoals} />
           </Panel>
           <Panel title="Resultados Mensais">
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={monthlyResults}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.4} />
-                <XAxis dataKey="label" tick={{ fontSize: 11 }} angle={-15} textAnchor="end" height={60} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="Chiti" stroke={COLOR_CHITI} strokeWidth={2.5} name={`Vitórias ${season.teams.chiti.name}`} />
-                <Line type="monotone" dataKey="Grilo" stroke={COLOR_GRILO} strokeWidth={2.5} name={`Vitórias ${season.teams.grilo.name}`} />
-                <Line type="monotone" dataKey="Empates" stroke={COLOR_DRAW} strokeWidth={2} strokeDasharray="5 5" />
-              </LineChart>
-            </ResponsiveContainer>
+            <HighchartsReact highcharts={Highcharts} options={monthlyResults} />
           </Panel>
         </div>
       </section>
@@ -132,6 +191,3 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
     </div>
   );
 }
-
-// keep monthLabel import used
-void monthLabel;
