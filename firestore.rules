@@ -9,7 +9,7 @@ service cloud.firestore {
 
     // Change this to your owner email.
     function OWNER_EMAIL() {
-      return "duarte.lima@pst.asseco.com";
+      return "duartemalima@gmail.com";
     }
 
     match /seasons/{seasonId} {
