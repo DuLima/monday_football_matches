@@ -7,8 +7,8 @@ export function PlayersTable({ season }: { season: Season }) {
 
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[820px] text-sm">
+      <div>
+        <table className="w-full text-xs sm:text-sm">
           <thead className="bg-[#0b4d1f] text-white">
             <tr>
               <Th align="left" className="pl-5">Jogador</Th>
