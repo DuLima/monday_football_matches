@@ -261,8 +261,22 @@ export type TopScorerSeries = {
   cumulative: number[];
 };
 
+function matchHasScorerData(m: Match): boolean {
+  if (!m.players) return false;
+  for (const t of Object.keys(m.players) as TeamId[]) {
+    for (const p of m.players[t] ?? []) {
+      if (playerGoals(p) > 0) return true;
+    }
+  }
+  return false;
+}
+
 export function topScorersOverTime(season: Season, limit = 5): { dates: string[]; series: TopScorerSeries[] } {
-  const played = season.matches.filter(isPlayed).slice().sort((a, b) => a.date.localeCompare(b.date));
+  const played = season.matches
+    .filter(isPlayed)
+    .filter(matchHasScorerData)
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date));
   const perMatch = new Map<string, number[]>();
   played.forEach((m, i) => {
     if (!m.players) return;
