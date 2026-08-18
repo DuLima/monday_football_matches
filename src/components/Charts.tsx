@@ -1,7 +1,8 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import type { Season } from '../data/types';
-import { groupByMonth, isPlayed, outcomeFor, teamStats } from '../lib/stats';
+import { groupByMonth, isPlayed, outcomeFor, teamStats, topScorersOverTime } from '../lib/stats';
+import { formatDate } from '../lib/format';
 
 const COLOR_CHITI = '#c0392b';
 const COLOR_GRILO = '#1f4e78';
@@ -126,6 +127,37 @@ export function Charts({ season }: { season: Season }) {
     drawsByMonth.push(dr);
   }
 
+  const topScorers = topScorersOverTime(season, 5);
+  const scorerPalette = ['#e11d48', '#f97316', '#0ea5e9', '#22c55e', '#8b5cf6'];
+  const topScorersChart: Highcharts.Options = {
+    chart: { ...BASE_CHART, type: 'line', height: 340 },
+    title: { text: undefined },
+    xAxis: {
+      categories: topScorers.dates.map(d => formatDate(d)),
+      crosshair: false,
+      labels: { style: { color: '#334155', fontSize: '11px' } },
+    },
+    yAxis: {
+      title: { text: null },
+      gridLineColor: '#e5e7eb',
+      allowDecimals: false,
+      labels: { style: { color: '#334155' } },
+    },
+    legend: { enabled: true, itemStyle: { color: '#334155' } },
+    tooltip: { shared: true, valueSuffix: ' ⚽' },
+    credits: NO_CREDITS,
+    plotOptions: { line: { marker: { radius: 4 } } },
+    series: topScorers.series.length === 0
+      ? [{ type: 'line', name: 'Sem golos ainda', data: [] }]
+      : topScorers.series.map((s, i) => ({
+        type: 'line',
+        name: `${s.name} · ${s.totalGoals}`,
+        data: s.cumulative,
+        color: scorerPalette[i % scorerPalette.length],
+        lineWidth: 2.5,
+      })),
+  };
+
   const monthlyResults: Highcharts.Options = {
     chart: { ...BASE_CHART, type: 'line', height: 340 },
     title: { text: undefined },
@@ -169,6 +201,15 @@ export function Charts({ season }: { season: Season }) {
           </Panel>
           <Panel title="Resultados Mensais">
             <HighchartsReact highcharts={Highcharts} options={monthlyResults} />
+          </Panel>
+        </div>
+      </section>
+
+      <section>
+        <SectionTitle>Top Marcadores</SectionTitle>
+        <div className="mt-4">
+          <Panel title="Golos Acumulados — Top 5 Jogadores">
+            <HighchartsReact highcharts={Highcharts} options={topScorersChart} />
           </Panel>
         </div>
       </section>

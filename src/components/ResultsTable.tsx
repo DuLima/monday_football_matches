@@ -18,8 +18,8 @@ export function ResultsTable({ season }: { season: Season }) {
   const [editing, setEditing] = useState<Match | null>(null);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <div className="grid grid-cols-[110px_1fr_120px_1fr_40px] items-center bg-brand-dark px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white">
+    <div className="overflow-x-auto rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div className="grid min-w-[560px] grid-cols-[110px_1fr_120px_1fr_40px] items-center bg-brand-dark px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white">
         <div>Data</div>
         <div>Equipa da Casa</div>
         <div className="text-center">Resultado</div>
@@ -32,7 +32,7 @@ export function ResultsTable({ season }: { season: Season }) {
           const played = isPlayed(m);
           return (
             <li key={m.id} className={isOpen ? 'bg-brand-red-soft/60' : ''}>
-              <div className="grid w-full grid-cols-[110px_1fr_120px_1fr_40px] items-center px-4 py-3 text-sm">
+              <div className="grid w-full min-w-[560px] grid-cols-[110px_1fr_120px_1fr_40px] items-center px-4 py-3 text-sm">
                 <button
                   type="button"
                   onClick={() => played && setOpenId(isOpen ? null : m.id)}

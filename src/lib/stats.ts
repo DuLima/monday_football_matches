@@ -255,6 +255,38 @@ export function playerStats(season: Season): PlayerStat[] {
   return out.sort((a, b) => b.games - a.games || b.wins - a.wins);
 }
 
+export type TopScorerSeries = {
+  name: string;
+  totalGoals: number;
+  cumulative: number[];
+};
+
+export function topScorersOverTime(season: Season, limit = 5): { dates: string[]; series: TopScorerSeries[] } {
+  const played = season.matches.filter(isPlayed).slice().sort((a, b) => a.date.localeCompare(b.date));
+  const perMatch = new Map<string, number[]>();
+  played.forEach((m, i) => {
+    if (!m.players) return;
+    for (const t of Object.keys(m.players) as TeamId[]) {
+      for (const entry of m.players[t] ?? []) {
+        const name = playerName(entry);
+        const g = playerGoals(entry);
+        if (g === 0) continue;
+        if (!perMatch.has(name)) perMatch.set(name, new Array(played.length).fill(0));
+        perMatch.get(name)![i] += g;
+      }
+    }
+  });
+  const series: TopScorerSeries[] = Array.from(perMatch.entries()).map(([name, arr]) => {
+    let cum = 0;
+    const cumulative = arr.map(g => { cum += g; return cum; });
+    return { name, totalGoals: cum, cumulative };
+  });
+  return {
+    dates: played.map(m => m.date),
+    series: series.sort((a, b) => b.totalGoals - a.totalGoals).slice(0, limit),
+  };
+}
+
 export function ownGoalsByTeam(season: Season): Record<TeamId, number> {
   const totals: Record<TeamId, number> = { chiti: 0, grilo: 0 };
   for (const m of season.matches) {

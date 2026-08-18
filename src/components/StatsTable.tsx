@@ -17,8 +17,8 @@ export function StatsTable({ season, matches, showForm = true }: Props) {
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <div>
-        <table className="w-full text-xs sm:text-sm">
+      <div className="-mx-px overflow-x-auto">
+        <table className="w-full min-w-[720px] text-xs sm:text-sm">
           <thead className="bg-brand-dark text-white">
             <tr>
               <Th align="left" className="pl-5">Equipa</Th>
