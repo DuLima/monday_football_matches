@@ -1,7 +1,7 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import type { Season } from '../data/types';
-import { groupByMonth, isPlayed, outcomeFor, teamStats, topScorersOverTime } from '../lib/stats';
+import { groupByMonth, isPlayed, outcomeFor, playerStats, teamStats, topScorersOverTime } from '../lib/stats';
 import { formatDate } from '../lib/format';
 
 const COLOR_CHITI = '#c0392b';
@@ -127,6 +127,38 @@ export function Charts({ season }: { season: Season }) {
     drawsByMonth.push(dr);
   }
 
+  const motmSlices = playerStats(season)
+    .filter(p => p.motm > 0)
+    .sort((a, b) => b.motm - a.motm)
+    .map(p => ({ name: p.name, y: p.motm }));
+  const motmPalette = ['#e11d48', '#f97316', '#f59e0b', '#22c55e', '#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899', '#14b8a6', '#a855f7'];
+  const motmChart: Highcharts.Options = {
+    chart: { ...BASE_CHART, type: 'pie', height: 340 },
+    title: { text: undefined },
+    tooltip: { pointFormat: '<b>{point.y}</b> MOTM ({point.percentage:.0f}%)' },
+    credits: NO_CREDITS,
+    plotOptions: {
+      pie: {
+        innerSize: '55%',
+        borderWidth: 2,
+        borderColor: '#ffffff',
+        dataLabels: {
+          enabled: true,
+          format: '{point.name} · {point.y}',
+          style: { color: '#334155', fontSize: '11px', fontWeight: '500', textOutline: 'none' },
+          distance: 14,
+        },
+      },
+    },
+    series: motmSlices.length === 0
+      ? [{ type: 'pie', name: 'MOTM', data: [{ name: 'Sem MOTM registados', y: 1, color: '#e5e7eb' }] }]
+      : [{
+        type: 'pie',
+        name: 'MOTM',
+        data: motmSlices.map((s, i) => ({ ...s, color: motmPalette[i % motmPalette.length] })),
+      }],
+  };
+
   const topScorers = topScorersOverTime(season, 5);
   const scorerPalette = ['#e11d48', '#f97316', '#0ea5e9', '#22c55e', '#8b5cf6'];
   const topScorersChart: Highcharts.Options = {
@@ -210,6 +242,15 @@ export function Charts({ season }: { season: Season }) {
         <div className="mt-4">
           <Panel title="Golos Acumulados — Top 5 Jogadores">
             <HighchartsReact highcharts={Highcharts} options={topScorersChart} />
+          </Panel>
+        </div>
+      </section>
+
+      <section>
+        <SectionTitle>Man of the Match</SectionTitle>
+        <div className="mt-4">
+          <Panel title="Distribuição de MOTM por Jogador">
+            <HighchartsReact highcharts={Highcharts} options={motmChart} />
           </Panel>
         </div>
       </section>
