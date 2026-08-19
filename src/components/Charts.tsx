@@ -238,17 +238,11 @@ export function Charts({ season }: { season: Season }) {
       </section>
 
       <section>
-        <SectionTitle>Top Marcadores</SectionTitle>
-        <div className="mt-4">
+        <SectionTitle>Top Marcadores &amp; MOTM</SectionTitle>
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Panel title="Golos Acumulados — Top 5 Jogadores">
             <HighchartsReact highcharts={Highcharts} options={topScorersChart} />
           </Panel>
-        </div>
-      </section>
-
-      <section>
-        <SectionTitle>Man of the Match</SectionTitle>
-        <div className="mt-4">
           <Panel title="Distribuição de MOTM por Jogador">
             <HighchartsReact highcharts={Highcharts} options={motmChart} />
           </Panel>
