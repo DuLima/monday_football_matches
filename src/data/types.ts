@@ -38,10 +38,17 @@ export function playerOwnGoals(p: PlayerEntry): number {
   return typeof p === 'string' ? 0 : (p.ownGoals ?? 0);
 }
 
+export type Injury = {
+  type: string;
+  startDate: string;
+  expectedReturn: string;
+};
+
 export type Season = {
   year: number;
   startDate: string;
   endDate: string;
   teams: Record<TeamId, Team>;
   matches: Match[];
+  injuries?: Record<string, Injury>;
 };

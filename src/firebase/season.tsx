@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import type { Match, Season } from '../data/types';
+import type { Injury, Match, Season } from '../data/types';
 import { season as staticSeason } from '../data/season';
 import { firebaseEnabled, firestore } from './config';
 
@@ -10,6 +10,8 @@ type SeasonState = {
   loading: boolean;
   saveMatch: (id: string, patch: Partial<Match>) => Promise<void>;
   saveSeason: (next: Season) => Promise<void>;
+  saveInjury: (name: string, injury: Injury) => Promise<void>;
+  removeInjury: (name: string) => Promise<void>;
 };
 
 const SeasonContext = createContext<SeasonState | null>(null);
@@ -62,6 +64,27 @@ export function SeasonProvider({ children }: { children: ReactNode }) {
       }
     },
     saveSeason: async next => {
+      if (firebaseEnabled) {
+        await setDoc(SEASON_DOC(), stripUndefined(next));
+      } else {
+        setSeason(next);
+      }
+    },
+    saveInjury: async (name, injury) => {
+      const next: Season = {
+        ...season,
+        injuries: { ...(season.injuries ?? {}), [name]: injury },
+      };
+      if (firebaseEnabled) {
+        await setDoc(SEASON_DOC(), stripUndefined(next));
+      } else {
+        setSeason(next);
+      }
+    },
+    removeInjury: async name => {
+      const nextInjuries = { ...(season.injuries ?? {}) };
+      delete nextInjuries[name];
+      const next: Season = { ...season, injuries: nextInjuries };
       if (firebaseEnabled) {
         await setDoc(SEASON_DOC(), stripUndefined(next));
       } else {

@@ -3,8 +3,10 @@ import type { Match, Season, TeamId } from '../data/types';
 import { playerGoals, playerName, playerOwnGoals } from '../data/types';
 import { useAuth } from '../firebase/auth';
 import { formatDate } from '../lib/format';
+import { isInjured } from '../lib/injuries';
 import { isPlayed } from '../lib/stats';
 import { EditMatchModal } from './EditMatchModal';
+import { MedicalIcon } from './MedicalIcon';
 
 export function ResultsTable({ season }: { season: Season }) {
   const { isOwner } = useAuth();
@@ -118,12 +120,14 @@ function MatchDetail({ match, season }: { match: Match; season: Season }) {
                   const name = playerName(entry);
                   const goals = playerGoals(entry);
                   const ownGoals = playerOwnGoals(entry);
+                  const injured = isInjured(season, name);
                   return (
                     <span
                       key={name}
                       className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm"
                     >
                       <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
+                      {injured && <MedicalIcon size={12} />}
                       {name}
                       {goals > 0 && (
                         <span className="inline-flex items-center gap-0.5 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-700">

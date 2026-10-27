@@ -2,7 +2,9 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import type { Season } from '../data/types';
 import { groupByMonth, isPlayed, outcomeFor, playerStats, teamStats, topScorersOverTime } from '../lib/stats';
+import { activeInjuries, formatTimeGone } from '../lib/injuries';
 import { formatDate } from '../lib/format';
+import { MedicalIcon } from './MedicalIcon';
 
 const COLOR_CHITI = '#c0392b';
 const COLOR_GRILO = '#1f4e78';
@@ -248,6 +250,55 @@ export function Charts({ season }: { season: Season }) {
           </Panel>
         </div>
       </section>
+
+      <section>
+        <SectionTitle>Lesões Ativas</SectionTitle>
+        <div className="mt-4">
+          <InjuryList season={season} />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function InjuryList({ season }: { season: Season }) {
+  const injured = activeInjuries(season);
+  if (injured.length === 0) {
+    return (
+      <div className="rounded-2xl border border-slate-100 bg-white p-6 text-center text-sm text-slate-500 shadow-sm">
+        Nenhum jogador lesionado neste momento.
+      </div>
+    );
+  }
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div className="-mx-px overflow-x-auto">
+        <table className="w-full min-w-[520px] text-xs sm:text-sm">
+          <thead className="bg-brand-dark text-white">
+            <tr>
+              <th className="px-3 py-2.5 pl-5 text-left text-xs font-semibold uppercase tracking-wider">Jogador</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider">Tipo de lesão</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider">Regresso previsto</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider">Tempo fora</th>
+            </tr>
+          </thead>
+          <tbody>
+            {injured.map(({ name, injury }, i) => (
+              <tr key={name} className={i % 2 ? 'bg-slate-50' : 'bg-white'}>
+                <td className="px-3 py-2.5 pl-5 text-left font-semibold text-slate-800">
+                  <span className="inline-flex items-center gap-1.5">
+                    <MedicalIcon size={14} />
+                    {name}
+                  </span>
+                </td>
+                <td className="px-3 py-2.5 text-left text-slate-700">{injury.type}</td>
+                <td className="px-3 py-2.5 text-left text-slate-700">{formatDate(injury.expectedReturn)}</td>
+                <td className="px-3 py-2.5 text-left text-rose-700 font-semibold">{formatTimeGone(injury)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

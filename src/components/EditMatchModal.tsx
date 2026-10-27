@@ -3,6 +3,8 @@ import type { Match, MatchPlayer, MatchStatus, PlayerEntry, Season, Team, TeamId
 import { playerGoals, playerName, playerOwnGoals } from '../data/types';
 import { useSeason } from '../firebase/season';
 import { formatDate } from '../lib/format';
+import { isInjured } from '../lib/injuries';
+import { MedicalIcon } from './MedicalIcon';
 
 type Props = { match: Match; season: Season; onClose: () => void };
 
@@ -193,6 +195,7 @@ export function EditMatchModal({ match, season, onClose }: Props) {
                     onGoals={setHomeGoals}
                     onOwnGoals={setHomeOG}
                     arrowSide="right"
+                    season={season}
                   />
                   <PoolColumn
                     pool={pool}
@@ -214,6 +217,7 @@ export function EditMatchModal({ match, season, onClose }: Props) {
                     onGoals={setAwayGoals}
                     onOwnGoals={setAwayOG}
                     arrowSide="left"
+                    season={season}
                   />
                 </div>
               </div>
@@ -255,7 +259,7 @@ export function EditMatchModal({ match, season, onClose }: Props) {
 }
 
 function TeamRoster({
-  team, players, goalTotal, expected, onRemove, onGoals, onOwnGoals, arrowSide,
+  team, players, goalTotal, expected, onRemove, onGoals, onOwnGoals, arrowSide, season,
 }: {
   team: Team;
   players: MatchPlayer[];
@@ -265,6 +269,7 @@ function TeamRoster({
   onGoals: (name: string, goals: number) => void;
   onOwnGoals: (name: string, og: number) => void;
   arrowSide: 'left' | 'right';
+  season: Season;
 }) {
   const mismatch = expected !== null && goalTotal !== expected;
   return (
@@ -293,7 +298,10 @@ function TeamRoster({
               {arrowSide === 'left' && (
                 <RemoveArrow direction="right" onClick={() => onRemove(p.name)} />
               )}
-              <span className="flex-1 truncate font-medium text-slate-800">{p.name}</span>
+              <span className="flex flex-1 items-center gap-1 truncate font-medium text-slate-800">
+                {isInjured(season, p.name) && <MedicalIcon size={12} />}
+                <span className="truncate">{p.name}</span>
+              </span>
               <input
                 type="number" min="0" value={p.goals ?? 0}
                 onChange={e => onGoals(p.name, parseInt(e.target.value || '0', 10))}
