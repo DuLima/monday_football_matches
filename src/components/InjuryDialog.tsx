@@ -27,12 +27,15 @@ function todayISO(): string {
 
 export function InjuryDialog({ name, current, onClose }: Props) {
   const { saveInjury, removeInjury } = useSeason();
-  const [type, setType] = useState<string>(current?.type ?? '');
+  const initialPreset = current && COMMON_TYPES.includes(current.type) ? current.type : (current ? 'Outra' : '');
+  const [preset, setPreset] = useState<string>(initialPreset);
+  const [customType, setCustomType] = useState<string>(current && !COMMON_TYPES.includes(current.type) ? current.type : '');
   const [expectedReturn, setExpectedReturn] = useState<string>(current?.expectedReturn ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEdit = !!current;
+  const type = preset === 'Outra' ? customType : preset;
 
   async function onSave() {
     setError(null);
@@ -90,17 +93,23 @@ export function InjuryDialog({ name, current, onClose }: Props) {
         <div className="space-y-4 p-6">
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">Tipo de lesão</label>
-            <input
-              list="injury-types"
-              type="text"
-              value={type}
-              onChange={e => setType(e.target.value)}
-              placeholder="ex: Rotura muscular"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
-            />
-            <datalist id="injury-types">
-              {COMMON_TYPES.map(t => <option key={t} value={t} />)}
-            </datalist>
+            <select
+              value={preset}
+              onChange={e => setPreset(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            >
+              <option value="" disabled>Selecciona…</option>
+              {COMMON_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+            {preset === 'Outra' && (
+              <input
+                type="text"
+                value={customType}
+                onChange={e => setCustomType(e.target.value)}
+                placeholder="Descreve a lesão"
+                className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+              />
+            )}
           </div>
 
           <div>
