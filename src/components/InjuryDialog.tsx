@@ -10,6 +10,7 @@ type Props = {
 
 const COMMON_TYPES = [
   'Rotura muscular',
+  'Rotura dos ligamentos do joelho',
   'Entorse',
   'Luxação',
   'Fractura',
