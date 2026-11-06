@@ -14,7 +14,7 @@ export function RankingsGrid({ season }: { season: Season }) {
   const topOgPlayer = ogPlayers[0] ?? null;
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="stagger grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <Card border="emerald" icon="🏆" title="Mês com Mais Golos">
         {r.monthMostGoals ? (
           <>
@@ -38,7 +38,7 @@ export function RankingsGrid({ season }: { season: Season }) {
           <>
             <Value>
               {season.teams[r.highestScoring.match.homeTeam].name} {r.highestScoring.match.homeScore}
-              <span className="mx-1 text-slate-400">–</span>
+              <span className="mx-1 text-slate-500">–</span>
               {r.highestScoring.match.awayScore} {season.teams[r.highestScoring.match.awayTeam].name}
             </Value>
             <Sub>{r.highestScoring.total} golos · {formatDate(r.highestScoring.match.date)}</Sub>
@@ -51,7 +51,7 @@ export function RankingsGrid({ season }: { season: Season }) {
           <>
             <Value>
               {season.teams[r.lowestScoring.match.homeTeam].name} {r.lowestScoring.match.homeScore}
-              <span className="mx-1 text-slate-400">–</span>
+              <span className="mx-1 text-slate-500">–</span>
               {r.lowestScoring.match.awayScore} {season.teams[r.lowestScoring.match.awayTeam].name}
             </Value>
             <Sub>{r.lowestScoring.total} golos · {formatDate(r.lowestScoring.match.date)}</Sub>
@@ -64,7 +64,7 @@ export function RankingsGrid({ season }: { season: Season }) {
           <>
             <Value>
               {season.teams[r.biggestWin.match.homeTeam].name} {r.biggestWin.match.homeScore}
-              <span className="mx-1 text-slate-400">–</span>
+              <span className="mx-1 text-slate-500">–</span>
               {r.biggestWin.match.awayScore} {season.teams[r.biggestWin.match.awayTeam].name}
             </Value>
             <Sub>{season.teams[r.biggestWin.winner].name} ganhou por {r.biggestWin.margin} · {formatDate(r.biggestWin.match.date)}</Sub>
@@ -126,25 +126,37 @@ export function RankingsGrid({ season }: { season: Season }) {
   );
 }
 
-const BORDER: Record<string, string> = {
-  emerald: 'border-l-brand-red',
-  rose: 'border-l-rose-400',
-  slate: 'border-l-slate-300',
+const ACCENT: Record<string, string> = {
+  emerald: 'from-lime/80 to-emerald-400/0',
+  rose: 'from-brand-red/80 to-brand-red/0',
+  slate: 'from-grilo/80 to-grilo/0',
+};
+const GLOW: Record<string, string> = {
+  emerald: 'bg-lime/10 ring-lime/25',
+  rose: 'bg-brand-red-soft ring-brand-red-ring',
+  slate: 'bg-grilo/10 ring-grilo/30',
 };
 
 function Card({ children, title, icon, border }: { children: React.ReactNode; title: string; icon: string; border: 'emerald' | 'rose' | 'slate' }) {
   return (
-    <div className={`rounded-2xl border-l-4 ${BORDER[border]} bg-white p-5 text-center shadow-sm ring-1 ring-slate-100`}>
-      <div className="text-3xl">{icon}</div>
-      <div className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-slate-500">{title}</div>
-      <div className="mt-2">{children}</div>
+    <div className="card card-hover group relative overflow-hidden p-5">
+      <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r ${ACCENT[border]}`} />
+      <div className="flex items-start gap-4">
+        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl ring-1 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110 ${GLOW[border]}`}>
+          {icon}
+        </div>
+        <div className="min-w-0">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">{title}</div>
+          <div className="mt-1.5">{children}</div>
+        </div>
+      </div>
     </div>
   );
 }
 function Value({ children }: { children: React.ReactNode }) {
-  return <div className="text-lg font-black text-brand-dark">{children}</div>;
+  return <div className="font-display text-lg font-bold leading-snug text-white">{children}</div>;
 }
 function Sub({ children }: { children: React.ReactNode }) {
-  return <div className="mt-1 text-xs text-slate-500">{children}</div>;
+  return <div className="mt-1 text-xs text-slate-400">{children}</div>;
 }
-function Empty() { return <div className="text-slate-400">Sem dados</div>; }
+function Empty() { return <div className="text-slate-500">Sem dados</div>; }

@@ -78,25 +78,25 @@ export function InjuryDialog({ name, current, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4" onClick={onClose}>
-      <div className="mt-16 w-full max-w-md rounded-2xl bg-white shadow-2xl" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+    <div className="fixed inset-0 z-50 flex animate-[fade-up_0.2s_ease-out_both] items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
+      <div className="mt-16 w-full max-w-md animate-pop rounded-3xl border border-white/10 bg-ink-900/95 shadow-[0_40px_80px_-20px_rgb(0_0_0/0.9)] backdrop-blur-xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brand-red">
               {isEdit ? 'Editar lesão' : 'Introduzir lesão'}
             </div>
-            <div className="text-lg font-bold text-brand-dark">{name}</div>
+            <div className="mt-0.5 font-display text-lg font-bold text-white">{name}</div>
           </div>
-          <button type="button" onClick={onClose} className="rounded-md p-2 text-slate-500 hover:bg-slate-100" aria-label="Fechar">✕</button>
+          <button type="button" onClick={onClose} className="rounded-full p-2 text-slate-400 transition hover:rotate-90 hover:bg-white/10 hover:text-white" aria-label="Fechar">✕</button>
         </div>
 
         <div className="space-y-4 p-6">
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">Tipo de lesão</label>
+            <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tipo de lesão</label>
             <select
               value={preset}
               onChange={e => setPreset(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+              className="field w-full px-3 py-2 text-sm"
             >
               <option value="" disabled>Selecciona…</option>
               {COMMON_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
@@ -107,31 +107,31 @@ export function InjuryDialog({ name, current, onClose }: Props) {
                 value={customType}
                 onChange={e => setCustomType(e.target.value)}
                 placeholder="Descreve a lesão"
-                className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+                className="field mt-2 w-full px-3 py-2 text-sm"
               />
             )}
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">Data prevista de regresso</label>
+            <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-slate-400">Data prevista de regresso</label>
             <input
               type="date"
               min={todayISO()}
               value={expectedReturn}
               onChange={e => setExpectedReturn(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+              className="field w-full px-3 py-2 text-sm"
             />
           </div>
 
-          {error && <div className="rounded-md bg-rose-50 p-3 text-sm text-rose-700 ring-1 ring-rose-200">{error}</div>}
+          {error && <div className="animate-pop rounded-xl bg-rose-500/10 p-3 text-sm text-rose-300 ring-1 ring-rose-500/30">{error}</div>}
         </div>
 
-        <div className="flex items-center justify-between gap-2 border-t border-slate-200 px-6 py-4">
+        <div className="flex items-center justify-between gap-2 border-t border-white/10 px-6 py-4">
           <div>
             {isEdit && (
               <button
                 type="button" onClick={onRemove} disabled={saving}
-                className="rounded-md px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-60"
+                className="rounded-full px-3 py-2 text-sm font-semibold text-rose-300 transition hover:bg-rose-500/10 disabled:opacity-60"
               >
                 Remover lesão
               </button>
@@ -140,13 +140,13 @@ export function InjuryDialog({ name, current, onClose }: Props) {
           <div className="flex gap-2">
             <button
               type="button" onClick={onClose}
-              className="rounded-md px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10"
             >
               Cancelar
             </button>
             <button
               type="button" onClick={onSave} disabled={saving}
-              className="rounded-md bg-brand-red px-5 py-2 text-sm font-bold text-white shadow hover:bg-rose-700 disabled:opacity-60"
+              className="rounded-full bg-gradient-to-r from-brand-red to-chiti px-6 py-2 text-sm font-bold text-white shadow-[0_8px_24px_-6px_rgb(244_63_94/0.8)] transition hover:brightness-110 disabled:opacity-60"
             >
               {saving ? 'A guardar…' : 'Guardar'}
             </button>

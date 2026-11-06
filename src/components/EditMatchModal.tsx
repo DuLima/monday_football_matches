@@ -132,22 +132,22 @@ export function EditMatchModal({ match, season, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex animate-[fade-up_0.2s_ease-out_both] items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="mt-8 w-full max-w-4xl rounded-2xl bg-white shadow-2xl"
+        className="mt-8 w-full max-w-4xl animate-pop rounded-3xl border border-white/10 bg-ink-900/95 shadow-[0_40px_80px_-20px_rgb(0_0_0/0.9)] backdrop-blur-xl"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-widest text-slate-500">Editar jogo</div>
-            <div className="text-lg font-bold text-slate-800">{formatDate(match.date)} · {homeTeam.name} vs {awayTeam.name}</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brand-red">Editar jogo</div>
+            <div className="mt-0.5 font-display text-lg font-bold text-white">{formatDate(match.date)} · {homeTeam.name} vs {awayTeam.name}</div>
           </div>
-          <button type="button" onClick={onClose} className="rounded-md p-2 text-slate-500 hover:bg-slate-100" aria-label="Fechar">✕</button>
+          <button type="button" onClick={onClose} className="rounded-full p-2 text-slate-400 transition hover:rotate-90 hover:bg-white/10 hover:text-white" aria-label="Fechar">✕</button>
         </div>
 
         <div className="space-y-5 p-6">
           <div>
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Estado</label>
+            <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-slate-400">Estado</label>
             <div className="flex flex-wrap gap-2">
               {(['played', 'cancelled', 'scheduled'] as MatchStatus[]).map(s => (
                 <button
@@ -155,10 +155,10 @@ export function EditMatchModal({ match, season, onClose }: Props) {
                   type="button"
                   onClick={() => setStatus(s)}
                   className={
-                    'rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-slate-200 ' +
+                    'rounded-full px-3.5 py-1 text-xs font-semibold ring-1 transition ' +
                     (status === s
-                      ? 'bg-brand-red text-white ring-rose-700'
-                      : 'bg-white text-slate-700 hover:bg-slate-50')
+                      ? 'bg-brand-red text-white ring-brand-red shadow-[0_6px_18px_-6px_rgb(244_63_94/0.9)]'
+                      : 'bg-white/5 text-slate-300 ring-white/10 hover:bg-white/10')
                   }
                 >
                   {s === 'played' ? 'Jogado' : s === 'cancelled' ? 'Cancelado' : 'Agendado'}
@@ -170,26 +170,26 @@ export function EditMatchModal({ match, season, onClose }: Props) {
           {status === 'played' && (
             <>
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Resultado</label>
+                <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-slate-400">Resultado</label>
                 <div className="flex items-center justify-center gap-4">
-                  <div className="w-40 text-right text-sm font-semibold" style={{ color: homeTeam.color }}>{homeTeam.name}</div>
+                  <div className="flex w-40 items-center justify-end gap-2 text-right text-sm font-semibold text-white">{homeTeam.name}<span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: homeTeam.color }} /></div>
                   <input
                     type="number" min="0" value={homeScore}
                     onChange={e => setHomeScore(e.target.value)}
-                    className="h-12 w-16 rounded-lg border border-slate-300 text-center text-xl font-bold focus:border-brand-red focus:outline-none"
+                    className="field h-14 w-20 text-center font-display text-2xl font-bold"
                   />
-                  <span className="text-slate-400">–</span>
+                  <span className="text-slate-500">–</span>
                   <input
                     type="number" min="0" value={awayScore}
                     onChange={e => setAwayScore(e.target.value)}
-                    className="h-12 w-16 rounded-lg border border-slate-300 text-center text-xl font-bold focus:border-brand-red focus:outline-none"
+                    className="field h-14 w-20 text-center font-display text-2xl font-bold"
                   />
-                  <div className="w-40 text-sm font-semibold" style={{ color: awayTeam.color }}>{awayTeam.name}</div>
+                  <div className="flex w-40 items-center gap-2 text-sm font-semibold text-white"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: awayTeam.color }} />{awayTeam.name}</div>
                 </div>
               </div>
 
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Convocatória</label>
+                <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-slate-400">Convocatória</label>
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                   <TeamRoster
                     team={homeTeam}
@@ -228,11 +228,11 @@ export function EditMatchModal({ match, season, onClose }: Props) {
               </div>
 
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Man of the Match</label>
+                <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-slate-400">Man of the Match</label>
                 <select
                   value={motm}
                   onChange={e => setMotm(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+                  className="field w-full px-3 py-2 text-sm"
                 >
                   <option value="">— nenhum —</option>
                   {allInMatch.map(n => <option key={n} value={n}>{n}</option>)}
@@ -241,19 +241,19 @@ export function EditMatchModal({ match, season, onClose }: Props) {
             </>
           )}
 
-          {error && <div className="rounded-md bg-rose-50 p-3 text-sm text-rose-700 ring-1 ring-rose-200">{error}</div>}
+          {error && <div className="animate-pop rounded-xl bg-rose-500/10 p-3 text-sm text-rose-300 ring-1 ring-rose-500/30">{error}</div>}
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-slate-200 px-6 py-4">
+        <div className="flex items-center justify-end gap-2 border-t border-white/10 px-6 py-4">
           <button
             type="button" onClick={onClose}
-            className="rounded-md px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+            className="rounded-full px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10"
           >
             Cancelar
           </button>
           <button
             type="button" onClick={onSave} disabled={saving}
-            className="rounded-md bg-brand-red px-5 py-2 text-sm font-bold text-white shadow hover:bg-rose-700 disabled:opacity-60"
+            className="rounded-full bg-gradient-to-r from-brand-red to-chiti px-6 py-2 text-sm font-bold text-white shadow-[0_8px_24px_-6px_rgb(244_63_94/0.8)] transition hover:brightness-110 disabled:opacity-60"
           >
             {saving ? 'A guardar…' : 'Guardar'}
           </button>
@@ -278,49 +278,47 @@ function TeamRoster({
 }) {
   const mismatch = expected !== null && goalTotal !== expected;
   return (
-    <div className="flex flex-col rounded-xl border border-slate-200 bg-slate-50/60">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
       <div
-        className="flex items-center justify-between rounded-t-xl px-3 py-2 text-xs font-bold uppercase tracking-wider text-white"
+        className="flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-white"
         style={{ backgroundColor: team.color }}
       >
         <span>{team.name}</span>
-        <span className={'rounded-full bg-white/20 px-2 py-0.5 text-[10px] ' + (mismatch ? 'text-amber-100 ring-1 ring-amber-200/70' : '')}>
+        <span className={'rounded-full bg-white/20 px-2 py-0.5 text-[10px] ' + (mismatch ? 'animate-pulse text-amber-100 ring-1 ring-amber-200/70' : '')}>
           {goalTotal} ⚽{expected !== null ? ` / ${expected}` : ''}
         </span>
       </div>
-      <div className="grid grid-cols-[1fr_36px_36px] items-center gap-1 px-3 py-1 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
+      <div className="grid grid-cols-[1fr_36px_36px] items-center gap-1 px-3 py-1 text-[9px] font-semibold uppercase tracking-wider text-slate-400">
         <span />
         <span className="text-center" title="Golos">⚽</span>
         <span className="text-center" title="Auto-golos">AG</span>
       </div>
       <div className="max-h-72 overflow-y-auto px-2 pb-2">
         {players.length === 0 && (
-          <div className="p-3 text-center text-xs text-slate-400">Sem jogadores</div>
+          <div className="p-3 text-center text-xs text-slate-500">Sem jogadores</div>
         )}
         <ul className="space-y-1">
           {players.map(p => (
-            <li key={p.name} className="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-xs shadow-sm ring-1 ring-slate-200">
+            <li key={p.name} className="flex animate-pop items-center gap-1 rounded-lg bg-white/5 px-2 py-1 text-xs ring-1 ring-white/10">
               {arrowSide === 'left' && (
                 <RemoveArrow direction="right" onClick={() => onRemove(p.name)} />
               )}
-              <span className="flex flex-1 items-center gap-1 truncate font-medium text-slate-800">
+              <span className="flex flex-1 items-center gap-1 truncate font-medium text-slate-100">
                 {isInjured(season, p.name) && <MedicalIcon size={12} />}
                 <span className="truncate">{p.name}</span>
               </span>
               <input
                 type="number" min="0" value={p.goals ?? 0}
                 onChange={e => onGoals(p.name, parseInt(e.target.value || '0', 10))}
-                className="h-7 w-9 rounded-md border border-slate-300 text-center text-sm font-bold focus:border-brand-red focus:outline-none"
+                className="field h-7 w-9 text-center text-sm font-bold"
                 aria-label={`Golos de ${p.name}`}
               />
               <input
                 type="number" min="0" value={p.ownGoals ?? 0}
                 onChange={e => onOwnGoals(p.name, parseInt(e.target.value || '0', 10))}
                 className={
-                  'h-7 w-9 rounded-md border text-center text-sm font-bold focus:outline-none ' +
-                  ((p.ownGoals ?? 0) > 0
-                    ? 'border-rose-400 bg-rose-50 text-rose-700 focus:border-rose-500'
-                    : 'border-slate-300 text-slate-700 focus:border-brand-red')
+                  'field h-7 w-9 text-center text-sm font-bold ' +
+                  ((p.ownGoals ?? 0) > 0 ? '!border-rose-400/60 !bg-rose-500/15 !text-rose-300' : '')
                 }
                 aria-label={`Auto-golos de ${p.name}`}
               />
@@ -347,40 +345,40 @@ function PoolColumn({
   onAddNewToHome: () => void; onAddNewToAway: () => void;
 }) {
   return (
-    <div className="flex flex-col rounded-xl border border-slate-200 bg-white">
-      <div className="rounded-t-xl bg-slate-700 px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-white">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
+      <div className="bg-white/10 px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-white">
         Jogadores
       </div>
       <div className="max-h-72 overflow-y-auto p-2">
         {pool.length === 0 && (
-          <div className="p-3 text-center text-xs text-slate-400">Todos os jogadores conhecidos já estão convocados. Adiciona novos abaixo.</div>
+          <div className="p-3 text-center text-xs text-slate-500">Todos os jogadores conhecidos já estão convocados. Adiciona novos abaixo.</div>
         )}
         <ul className="space-y-1">
           {pool.map(name => (
-            <li key={name} className="flex items-center gap-1.5 rounded-md bg-slate-50 px-2 py-1 text-xs ring-1 ring-slate-200">
+            <li key={name} className="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1 text-xs ring-1 ring-white/10 transition hover:bg-white/10">
               <AddArrow direction="left" color={homeTeam.color} onClick={() => onAddHome(name)} title={`Adicionar a ${homeTeam.name}`} />
-              <span className="flex-1 truncate text-center font-medium text-slate-700">{name}</span>
+              <span className="flex-1 truncate text-center font-medium text-slate-200">{name}</span>
               <AddArrow direction="right" color={awayTeam.color} onClick={() => onAddAway(name)} title={`Adicionar a ${awayTeam.name}`} />
             </li>
           ))}
         </ul>
       </div>
-      <div className="border-t border-slate-200 p-2">
+      <div className="border-t border-white/10 p-2">
         <input
           type="text" value={newName}
           onChange={e => onNewName(e.target.value)}
           placeholder="Novo jogador…"
-          className="mb-1 w-full rounded-md border border-slate-300 px-2 py-1 text-xs focus:border-brand-red focus:outline-none"
+          className="field mb-1 w-full px-2 py-1 text-xs"
         />
         <div className="flex gap-1">
           <button
             type="button" onClick={onAddNewToHome}
-            className="flex-1 rounded-md px-2 py-1 text-[10px] font-bold text-white"
+            className="flex-1 rounded-md px-2 py-1 text-[10px] font-bold text-white transition hover:brightness-125"
             style={{ backgroundColor: homeTeam.color }}
           >← {homeTeam.shortName}</button>
           <button
             type="button" onClick={onAddNewToAway}
-            className="flex-1 rounded-md px-2 py-1 text-[10px] font-bold text-white"
+            className="flex-1 rounded-md px-2 py-1 text-[10px] font-bold text-white transition hover:brightness-125"
             style={{ backgroundColor: awayTeam.color }}
           >{awayTeam.shortName} →</button>
         </div>
@@ -395,7 +393,7 @@ function AddArrow({ direction, color, onClick, title }: {
   return (
     <button
       type="button" onClick={onClick} title={title}
-      className="flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold text-white transition hover:opacity-90"
+      className="flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold text-white transition hover:scale-110 hover:brightness-125"
       style={{ backgroundColor: color }}
     >
       {direction === 'left' ? '←' : '→'}
@@ -407,7 +405,7 @@ function RemoveArrow({ direction, onClick }: { direction: 'left' | 'right'; onCl
   return (
     <button
       type="button" onClick={onClick} title="Remover"
-      className="flex h-6 w-6 items-center justify-center rounded-md bg-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-300"
+      className="flex h-6 w-6 items-center justify-center rounded-md bg-white/10 text-xs font-bold text-slate-300 transition hover:bg-rose-500/30 hover:text-white"
     >
       {direction === 'left' ? '←' : '→'}
     </button>

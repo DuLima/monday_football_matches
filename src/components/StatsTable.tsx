@@ -16,10 +16,10 @@ export function StatsTable({ season, matches, showForm = true }: Props) {
   const ranked = [grilo, chiti].sort((a, b) => b.points - a.points || b.goalDiff - a.goalDiff);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <div className="-mx-px overflow-x-auto">
+    <div className="card overflow-hidden">
+      <div className="overflow-x-auto">
         <table className="w-full min-w-[720px] text-xs sm:text-sm">
-          <thead className="bg-brand-dark text-white">
+          <thead className="border-b border-white/10 text-slate-400">
             <tr>
               <Th align="left" className="pl-5">Equipa</Th>
               <Th>J</Th>
@@ -36,20 +36,26 @@ export function StatsTable({ season, matches, showForm = true }: Props) {
               <Th>MGV</Th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-white/5">
             {ranked.map((s, i) => {
               const team = season.teams[s.team];
               return (
-                <tr key={s.team} className={i % 2 ? 'bg-slate-50' : 'bg-white'}>
-                  <Td align="left" className="pl-5 font-semibold text-slate-800">{team.name}</Td>
+                <tr key={s.team} className="text-slate-300 transition-colors hover:bg-white/[0.04]">
+                  <Td align="left" className="pl-5">
+                    <span className="flex items-center gap-3">
+                      <span className={'font-display text-lg font-bold ' + (i === 0 ? 'text-lime' : 'text-slate-500')}>{i + 1}</span>
+                      <span className="h-8 w-1 rounded-full" style={{ background: team.color }} />
+                      <span className="whitespace-nowrap font-semibold text-white">{team.name}</span>
+                    </span>
+                  </Td>
                   <Td>{s.played}</Td>
-                  <Td className="font-bold">{s.points}</Td>
+                  <Td className="font-display text-base font-bold text-white">{s.points}</Td>
                   <Td>{s.wins}</Td>
                   <Td>{s.draws}</Td>
                   <Td>{s.losses}</Td>
                   <Td>{s.goalsFor}</Td>
                   <Td>{s.goalsAgainst}</Td>
-                  <Td className={s.goalDiff > 0 ? 'text-emerald-600' : s.goalDiff < 0 ? 'text-rose-600' : ''}>
+                  <Td className={s.goalDiff > 0 ? 'font-semibold text-emerald-300' : s.goalDiff < 0 ? 'font-semibold text-rose-300' : ''}>
                     {fmtSigned(s.goalDiff)}
                   </Td>
                   {showForm && (
@@ -72,14 +78,14 @@ export function StatsTable({ season, matches, showForm = true }: Props) {
 
 function Th({ children, align = 'center', className = '' }: { children: React.ReactNode; align?: 'left' | 'center'; className?: string }) {
   return (
-    <th className={`px-3 py-2.5 text-xs font-semibold uppercase tracking-wider ${align === 'left' ? 'text-left' : 'text-center'} ${className}`}>
+    <th className={`px-3 py-3 text-[11px] font-semibold uppercase tracking-wider ${align === 'left' ? 'text-left' : 'text-center'} ${className}`}>
       {children}
     </th>
   );
 }
 function Td({ children, align = 'center', className = '' }: { children: React.ReactNode; align?: 'left' | 'center'; className?: string }) {
   return (
-    <td className={`px-3 py-2.5 ${align === 'left' ? 'text-left' : 'text-center'} ${className}`}>
+    <td className={`px-3 py-3 ${align === 'left' ? 'text-left' : 'text-center'} ${className}`}>
       {children}
     </td>
   );

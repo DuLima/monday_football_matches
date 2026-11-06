@@ -20,45 +20,45 @@ export function ResultsTable({ season }: { season: Season }) {
   const [editing, setEditing] = useState<Match | null>(null);
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <div className="grid min-w-[560px] grid-cols-[110px_1fr_120px_1fr_40px] items-center bg-brand-dark px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white">
+    <div className="card overflow-x-auto">
+      <div className="grid min-w-[560px] grid-cols-[110px_1fr_120px_1fr_40px] items-center border-b border-white/10 px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
         <div>Data</div>
         <div>Equipa da Casa</div>
         <div className="text-center">Resultado</div>
         <div>Equipa Visitante</div>
         <div />
       </div>
-      <ul className="divide-y divide-slate-100">
+      <ul className="divide-y divide-white/5">
         {rows.map(m => {
           const isOpen = openId === m.id;
           const played = isPlayed(m);
           return (
-            <li key={m.id} className={isOpen ? 'bg-brand-red-soft/60' : ''}>
+            <li key={m.id} className={'transition-colors ' + (isOpen ? 'bg-white/[0.04]' : 'hover:bg-white/[0.025]')}>
               <div className="grid w-full min-w-[560px] grid-cols-[110px_1fr_120px_1fr_40px] items-center px-4 py-3 text-sm">
                 <button
                   type="button"
                   onClick={() => played && setOpenId(isOpen ? null : m.id)}
-                  className={'text-left text-slate-600 ' + (played ? 'cursor-pointer hover:underline' : 'cursor-default')}
+                  className={'text-left tabular-nums text-slate-400 ' + (played ? 'cursor-pointer hover:text-white' : 'cursor-default')}
                 >
                   {formatDate(m.date)}
                 </button>
-                <div className="font-medium text-slate-800">{season.teams[m.homeTeam].name}</div>
+                <TeamName team={season.teams[m.homeTeam]} won={played && m.homeScore! > m.awayScore!} />
                 <div className="text-center">
                   {played ? (
-                    <span className="text-base font-bold text-slate-900">
-                      {m.homeScore} <span className="mx-1 text-slate-400">–</span> {m.awayScore}
+                    <span className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-1 font-display text-base font-bold tabular-nums text-white ring-1 ring-white/10">
+                      {m.homeScore} <span className="text-slate-500">–</span> {m.awayScore}
                     </span>
                   ) : (
                     <StatusPill status={m.status} />
                   )}
                 </div>
-                <div className="font-medium text-slate-800">{season.teams[m.awayTeam].name}</div>
+                <TeamName team={season.teams[m.awayTeam]} won={played && m.awayScore! > m.homeScore!} />
                 <div className="flex items-center justify-end gap-1">
                   {isOwner && (
                     <button
                       type="button"
                       onClick={() => setEditing(m)}
-                      className="rounded-md bg-brand-red px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm hover:bg-rose-700"
+                      className="rounded-lg bg-brand-red-soft px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-brand-red ring-1 ring-brand-red-ring transition hover:bg-brand-red hover:text-white"
                     >
                       Editar
                     </button>
@@ -67,10 +67,10 @@ export function ResultsTable({ season }: { season: Season }) {
                     <button
                       type="button"
                       onClick={() => setOpenId(isOpen ? null : m.id)}
-                      className="rounded-md p-1 text-slate-400 hover:bg-slate-100"
+                      className="rounded-md p-1 text-slate-500 transition hover:bg-white/10 hover:text-white"
                       aria-label="Expandir"
                     >
-                      {isOpen ? '▲' : '▼'}
+                      <span className={'inline-block transition-transform duration-300 ' + (isOpen ? 'rotate-180' : '')}>▼</span>
                     </button>
                   )}
                 </div>
@@ -80,7 +80,7 @@ export function ResultsTable({ season }: { season: Season }) {
           );
         })}
         {rows.length === 0 && (
-          <li className="p-6 text-center text-slate-500">Sem jogos registados.</li>
+          <li className="p-6 text-center text-slate-400">Sem jogos registados.</li>
         )}
       </ul>
 
@@ -91,12 +91,22 @@ export function ResultsTable({ season }: { season: Season }) {
   );
 }
 
+function TeamName({ team, won }: { team: Season['teams'][TeamId]; won: boolean }) {
+  return (
+    <div className={'flex items-center gap-2 font-medium ' + (won ? 'text-white' : 'text-slate-400')}>
+      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: team.color }} />
+      <span className="truncate">{team.name}</span>
+      {won && <span className="text-[10px] font-bold text-lime">V</span>}
+    </div>
+  );
+}
+
 function StatusPill({ status }: { status: Match['status'] }) {
   if (status === 'cancelled') {
-    return <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-semibold text-rose-700">Cancelado</span>;
+    return <span className="rounded-full bg-rose-500/15 px-2 py-0.5 text-[11px] font-semibold text-rose-300 ring-1 ring-rose-500/30">Cancelado</span>;
   }
   if (status === 'scheduled') {
-    return <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">Agendado</span>;
+    return <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] font-semibold text-slate-400 ring-1 ring-white/10">Agendado</span>;
   }
   return null;
 }
@@ -104,18 +114,18 @@ function StatusPill({ status }: { status: Match['status'] }) {
 function MatchDetail({ match, season }: { match: Match; season: Season }) {
   const teams: TeamId[] = [match.homeTeam, match.awayTeam];
   return (
-    <div className="border-t border-brand-red-ring/40 bg-brand-red-soft/40 px-6 py-4">
+    <div className="animate-fade-up border-t border-white/5 px-6 py-5">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {teams.map(t => {
           const team = season.teams[t];
           const players = match.players?.[t] ?? [];
           return (
             <div key={t}>
-              <div className="mb-2 inline-block rounded-md px-3 py-1 text-xs font-bold text-white" style={{ backgroundColor: team.color }}>
+              <div className="mb-3 inline-block rounded-lg px-3 py-1 text-xs font-bold text-white shadow-lg" style={{ backgroundColor: team.color }}>
                 {team.name}
               </div>
               <div className="flex flex-wrap gap-1.5">
-                {players.length === 0 && <span className="text-xs text-slate-400">Sem jogadores registados</span>}
+                {players.length === 0 && <span className="text-xs text-slate-500">Sem jogadores registados</span>}
                 {players.map(entry => {
                   const name = playerName(entry);
                   const goals = playerGoals(entry);
@@ -124,23 +134,23 @@ function MatchDetail({ match, season }: { match: Match; season: Season }) {
                   return (
                     <span
                       key={name}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-200 ring-1 ring-white/10 transition hover:bg-white/10"
                     >
                       <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
                       {injured && <MedicalIcon size={12} />}
                       {name}
                       {goals > 0 && (
-                        <span className="inline-flex items-center gap-0.5 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-700">
+                        <span className="inline-flex items-center gap-0.5 rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-bold text-white">
                           {goals} ⚽
                         </span>
                       )}
                       {ownGoals > 0 && (
-                        <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-100 px-1.5 py-0.5 text-[10px] font-bold text-rose-700" title="Auto-golos">
+                        <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-500/15 px-1.5 py-0.5 text-[10px] font-bold text-rose-300" title="Auto-golos">
                           {ownGoals} AG
                         </span>
                       )}
                       {match.motm === name && (
-                        <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">⭐ MOTM</span>
+                        <span className="rounded-full bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">⭐ MOTM</span>
                       )}
                     </span>
                   );
@@ -151,8 +161,8 @@ function MatchDetail({ match, season }: { match: Match; season: Season }) {
         })}
       </div>
       {match.motm && (
-        <div className="mt-4 rounded-lg bg-amber-50 py-2 text-center text-sm text-amber-900 ring-1 ring-amber-200">
-          ⭐ Man of the Match: <span className="font-bold">{match.motm}</span>
+        <div className="mt-5 rounded-xl bg-gradient-to-r from-amber-400/5 via-amber-400/15 to-amber-400/5 py-2.5 text-center text-sm text-amber-200 ring-1 ring-amber-400/25">
+          ⭐ Man of the Match: <span className="font-bold text-amber-100">{match.motm}</span>
         </div>
       )}
     </div>

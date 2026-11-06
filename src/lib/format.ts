@@ -34,13 +34,6 @@ export function todayISO(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export function daysBetween(from: Date, to: Date): number {
-  const ms = 1000 * 60 * 60 * 24;
-  const a = new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime();
-  const b = new Date(to.getFullYear(), to.getMonth(), to.getDate()).getTime();
-  return Math.round((b - a) / ms);
-}
-
 export function fmt1(n: number): string {
   return n.toFixed(2);
 }

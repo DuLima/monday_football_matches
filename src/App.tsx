@@ -11,6 +11,7 @@ import { ResultsTable } from './components/ResultsTable';
 import { nextMatch } from './lib/stats';
 import { AuthProvider } from './firebase/auth';
 import { SeasonProvider, useSeason } from './firebase/season';
+import { SectionTitle } from './components/ui';
 
 function App() {
   return (
@@ -29,27 +30,27 @@ function AppInner() {
   const next = nextMatch(season, today);
 
   return (
-    <div className="min-h-screen bg-page-cream">
+    <div className="min-h-screen">
       <Header active={tab} onChange={setTab} />
 
-      <main className="mx-auto max-w-7xl px-4 py-6">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-[300px_1fr]">
-          <NextGameCard match={next} season={season} today={today} />
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
+        <div className="stagger grid grid-cols-1 gap-4 lg:grid-cols-[minmax(320px,380px)_1fr]">
+          <NextGameCard match={next} season={season} />
           <SeasonProgressCard season={season} today={today} />
         </div>
 
-        <div className="mt-8">
+        <div key={tab} className="mt-10 animate-fade-up">
           {tab === 'stats' && (
-            <section className="space-y-8">
+            <section className="space-y-10">
               <section>
-                <SectionTitle>Estatísticas Gerais</SectionTitle>
-                <div className="mt-4">
+                <SectionTitle eyebrow="Classificação">Estatísticas Gerais</SectionTitle>
+                <div className="mt-5">
                   <StatsTable season={season} />
                 </div>
               </section>
               <section>
-                <SectionTitle>Rankings</SectionTitle>
-                <div className="mt-4">
+                <SectionTitle eyebrow="Recordes">Rankings</SectionTitle>
+                <div className="mt-5">
                   <RankingsGrid season={season} />
                 </div>
               </section>
@@ -58,44 +59,35 @@ function AppInner() {
           {tab === 'charts' && <Charts season={season} />}
           {tab === 'monthly' && (
             <section>
-              <SectionTitle>Estatísticas Mensais</SectionTitle>
-              <div className="mt-4">
+              <SectionTitle eyebrow="Mês a mês">Estatísticas Mensais</SectionTitle>
+              <div className="mt-5">
                 <MonthlyStats season={season} />
               </div>
             </section>
           )}
           {tab === 'players' && (
             <section>
-              <SectionTitle>Jogadores</SectionTitle>
-              <div className="mt-4">
+              <SectionTitle eyebrow="Plantel">Jogadores</SectionTitle>
+              <div className="mt-5">
                 <PlayersTable season={season} />
               </div>
             </section>
           )}
           {tab === 'results' && (
             <section>
-              <SectionTitle>Resultados Jogos</SectionTitle>
-              <div className="mt-4">
+              <SectionTitle eyebrow="Histórico">Resultados Jogos</SectionTitle>
+              <div className="mt-5">
                 <ResultsTable season={season} />
               </div>
             </section>
           )}
         </div>
 
-        <footer className="mt-16 pb-8 text-center text-xs text-slate-400">
+        <footer className="mt-20 pb-8 text-center text-xs tracking-wider text-slate-500">
           Segundas Mágicas · Época {season.year}
         </footer>
       </main>
     </div>
-  );
-}
-
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="relative inline-block pb-1 text-2xl font-bold text-brand-dark">
-      {children}
-      <span className="absolute -bottom-0.5 left-0 h-1 w-16 rounded-full bg-brand-red" />
-    </h2>
   );
 }
 
