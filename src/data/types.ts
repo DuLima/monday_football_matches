@@ -4,7 +4,6 @@ export type Team = {
   id: TeamId;
   name: string;
   shortName: string;
-  logo: string;
   color: string;
   colorSoft: string;
 };

@@ -28,6 +28,12 @@ export function monthLabel(key: string): string {
   return `${MONTHS_PT[month - 1]} ${year}`;
 }
 
+// Today's date as YYYY-MM-DD in the viewer's local timezone (toISOString() would give the UTC date).
+export function todayISO(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export function daysBetween(from: Date, to: Date): number {
   const ms = 1000 * 60 * 60 * 24;
   const a = new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime();

@@ -105,12 +105,17 @@ export function EditMatchModal({ match, season, onClose }: Props) {
 
   async function onSave() {
     setError(null);
+    const isScore = (v: string) => /^\d+$/.test(v.trim());
+    if (status === 'played' && (!isScore(homeScore) || !isScore(awayScore))) {
+      setError('Indica o resultado das duas equipas (números inteiros, 0 ou mais).');
+      return;
+    }
     setSaving(true);
     try {
       const patch: Partial<Match> = {
         status,
-        homeScore: status === 'played' && homeScore !== '' ? parseInt(homeScore, 10) : undefined,
-        awayScore: status === 'played' && awayScore !== '' ? parseInt(awayScore, 10) : undefined,
+        homeScore: status === 'played' ? parseInt(homeScore, 10) : undefined,
+        awayScore: status === 'played' ? parseInt(awayScore, 10) : undefined,
         players: status === 'played' ? {
           [match.homeTeam]: home,
           [match.awayTeam]: away,

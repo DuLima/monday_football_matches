@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, runTransaction, setDoc } from 'firebase/firestore';
 import type { Injury, Match, Season } from '../data/types';
 import { season as staticSeason } from '../data/season';
 import { firebaseEnabled, firestore } from './config';
@@ -28,10 +28,7 @@ export function SeasonProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(firebaseEnabled);
 
   useEffect(() => {
-    if (!firebaseEnabled) {
-      setLoading(false);
-      return;
-    }
+    if (!firebaseEnabled) return;
     return onSnapshot(SEASON_DOC(), snap => {
       if (snap.exists()) {
         setSeason(snap.data() as Season);
@@ -48,50 +45,48 @@ export function SeasonProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const value = useMemo<SeasonState>(() => ({
-    season,
-    source,
-    loading,
-    saveMatch: async (id, patch) => {
-      const next: Season = {
-        ...season,
-        matches: season.matches.map(m => (m.id === id ? { ...m, ...patch } : m)),
-      };
-      if (firebaseEnabled) {
-        await setDoc(SEASON_DOC(), stripUndefined(next));
-      } else {
-        setSeason(next);
+  const value = useMemo<SeasonState>(() => {
+    // Read-modify-write against the latest stored season, so edits made
+    // elsewhere (another tab or device) since our last snapshot aren't lost.
+    async function mutate(fn: (current: Season) => Season) {
+      if (!firebaseEnabled) {
+        setSeason(prev => fn(prev));
+        return;
       }
-    },
-    saveSeason: async next => {
-      if (firebaseEnabled) {
-        await setDoc(SEASON_DOC(), stripUndefined(next));
-      } else {
-        setSeason(next);
-      }
-    },
-    saveInjury: async (name, injury) => {
-      const next: Season = {
-        ...season,
-        injuries: { ...(season.injuries ?? {}), [name]: injury },
-      };
-      if (firebaseEnabled) {
-        await setDoc(SEASON_DOC(), stripUndefined(next));
-      } else {
-        setSeason(next);
-      }
-    },
-    removeInjury: async name => {
-      const nextInjuries = { ...(season.injuries ?? {}) };
-      delete nextInjuries[name];
-      const next: Season = { ...season, injuries: nextInjuries };
-      if (firebaseEnabled) {
-        await setDoc(SEASON_DOC(), stripUndefined(next));
-      } else {
-        setSeason(next);
-      }
-    },
-  }), [season, source, loading]);
+      const ref = SEASON_DOC();
+      await runTransaction(firestore(), async tx => {
+        const snap = await tx.get(ref);
+        const current = snap.exists() ? (snap.data() as Season) : staticSeason;
+        tx.set(ref, stripUndefined(fn(current)));
+      });
+    }
+
+    return {
+      season,
+      source,
+      loading,
+      saveMatch: (id, patch) => mutate(s => ({
+        ...s,
+        matches: s.matches.map(m => (m.id === id ? { ...m, ...patch } : m)),
+      })),
+      saveSeason: async next => {
+        if (firebaseEnabled) {
+          await setDoc(SEASON_DOC(), stripUndefined(next));
+        } else {
+          setSeason(next);
+        }
+      },
+      saveInjury: (name, injury) => mutate(s => ({
+        ...s,
+        injuries: { ...(s.injuries ?? {}), [name]: injury },
+      })),
+      removeInjury: name => mutate(s => {
+        const nextInjuries = { ...(s.injuries ?? {}) };
+        delete nextInjuries[name];
+        return { ...s, injuries: nextInjuries };
+      }),
+    };
+  }, [season, source, loading]);
 
   return <SeasonContext.Provider value={value}>{children}</SeasonContext.Provider>;
 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Match, Season, TeamId } from '../data/types';
 import { playerGoals, playerName, playerOwnGoals } from '../data/types';
 import { useAuth } from '../firebase/auth';
-import { formatDate } from '../lib/format';
+import { formatDate, todayISO } from '../lib/format';
 import { isInjured } from '../lib/injuries';
 import { isPlayed } from '../lib/stats';
 import { EditMatchModal } from './EditMatchModal';
@@ -10,7 +10,7 @@ import { MedicalIcon } from './MedicalIcon';
 
 export function ResultsTable({ season }: { season: Season }) {
   const { isOwner } = useAuth();
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = todayISO();
   const rows = season.matches
     .filter(m => m.date <= todayStr)
     .slice()

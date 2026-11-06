@@ -1,4 +1,5 @@
 import type { Injury, Season } from '../data/types';
+import { todayISO } from './format';
 
 export function getInjury(season: Season, name: string): Injury | undefined {
   return season.injuries?.[name];
@@ -7,7 +8,7 @@ export function getInjury(season: Season, name: string): Injury | undefined {
 export function isInjured(season: Season, name: string): boolean {
   const inj = getInjury(season, name);
   if (!inj) return false;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISO();
   return inj.expectedReturn >= today;
 }
 
@@ -31,7 +32,7 @@ export function formatTimeGone(injury: Injury): string {
 
 export function activeInjuries(season: Season): Array<{ name: string; injury: Injury }> {
   const map = season.injuries ?? {};
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISO();
   return Object.entries(map)
     .filter(([, inj]) => inj.expectedReturn >= today)
     .map(([name, injury]) => ({ name, injury }))

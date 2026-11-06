@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import type { Season, TeamId } from '../data/types';
 import { useAuth } from '../firebase/auth';
 import { formatTimeGone, getInjury, isInjured } from '../lib/injuries';
@@ -141,10 +141,8 @@ function NameWithMenu({
   onCloseMenu: () => void;
   onIntroduce: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
   return (
-    <div ref={ref} className="relative inline-block">
+    <div className="relative inline-block">
       <button
         type="button"
         onClick={() => canEdit && onToggleMenu()}

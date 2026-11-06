@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Injury } from '../data/types';
 import { useSeason } from '../firebase/season';
+import { todayISO } from '../lib/format';
 
 type Props = {
   name: string;
@@ -19,11 +20,6 @@ const COMMON_TYPES = [
   'Contusão',
   'Outra',
 ];
-
-function todayISO(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
 
 export function InjuryDialog({ name, current, onClose }: Props) {
   const { saveInjury, removeInjury } = useSeason();
@@ -45,6 +41,10 @@ export function InjuryDialog({ name, current, onClose }: Props) {
     }
     if (!expectedReturn) {
       setError('Indica a data prevista de regresso.');
+      return;
+    }
+    if (expectedReturn < todayISO()) {
+      setError('A data prevista de regresso não pode ser no passado.');
       return;
     }
     setSaving(true);
@@ -116,6 +116,7 @@ export function InjuryDialog({ name, current, onClose }: Props) {
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">Data prevista de regresso</label>
             <input
               type="date"
+              min={todayISO()}
               value={expectedReturn}
               onChange={e => setExpectedReturn(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"

@@ -80,15 +80,15 @@ export function seasonProgress(season: Season, today: Date) {
   const scheduled = total - played - cancelled;
   const elapsedMs = Math.max(0, Math.min(today.getTime(), end.getTime()) - start.getTime());
   const totalMs = end.getTime() - start.getTime();
-  const seasonPct = Math.round((elapsedMs / totalMs) * 100);
+  const seasonPct = totalMs > 0 ? Math.round((elapsedMs / totalMs) * 100) : 0;
   return {
     played,
     cancelled,
     scheduled,
     total,
-    playedPct: Math.round((played / total) * 100),
-    cancelledPct: Math.round((cancelled / total) * 100),
-    scheduledPct: Math.round((scheduled / total) * 100),
+    playedPct: total ? Math.round((played / total) * 100) : 0,
+    cancelledPct: total ? Math.round((cancelled / total) * 100) : 0,
+    scheduledPct: total ? Math.round((scheduled / total) * 100) : 0,
     seasonPct,
   };
 }
@@ -166,13 +166,15 @@ export function computeRankings(season: Season): Rankings {
   const leastMonth = monthTotals.slice().sort((a, b) => a.goals - b.goals)[0];
 
   const totalGoals = played.reduce((s, m) => s + m.homeScore! + m.awayScore!, 0);
+  const biggestMargin = Math.abs(biggest.homeScore! - biggest.awayScore!);
 
   return {
     highestScoring: { match: highest, total: highest.homeScore! + highest.awayScore! },
     lowestScoring: { match: lowest, total: lowest.homeScore! + lowest.awayScore! },
-    biggestWin: {
+    // Only draws played so far: there is no win to show.
+    biggestWin: biggestMargin === 0 ? null : {
       match: biggest,
-      margin: Math.abs(biggest.homeScore! - biggest.awayScore!),
+      margin: biggestMargin,
       winner: biggest.homeScore! > biggest.awayScore! ? biggest.homeTeam : biggest.awayTeam,
     },
     bestStreak: streak,

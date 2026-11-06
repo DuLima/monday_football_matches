@@ -16,7 +16,7 @@ export function OwnerBar() {
   async function onReset() {
     const ok = window.confirm(
       'Repor os dados da época?\n\n' +
-      'Esta ação apaga todos os jogos, resultados, convocatórias e MOTMs guardados. ' +
+      'Esta ação apaga todos os jogos, resultados, convocatórias, MOTMs e lesões guardados. ' +
       'Ficam apenas os dados iniciais.',
     );
     if (!ok) return;
