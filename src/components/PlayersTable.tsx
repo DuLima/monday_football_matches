@@ -61,7 +61,7 @@ export function PlayersTable({ season }: { season: Season }) {
                         return (
                           <span
                             key={t}
-                            className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold text-white/95 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.15)]"
+                            className="inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-bold text-white/95 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.15)]"
                             style={{ backgroundColor: team.color }}
                           >
                             {team.name} ({p.perTeam[t]})
@@ -72,35 +72,35 @@ export function PlayersTable({ season }: { season: Season }) {
                   </Td>
                   <Td align="left">
                     {p.goals > 0 ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-xs font-semibold text-white">
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-white/10 px-2 py-0.5 text-xs font-semibold text-white">
                         {p.goals} ⚽
                       </span>
                     ) : <span className="text-slate-600">—</span>}
                   </Td>
                   <Td align="left">
                     {p.ownGoals > 0 ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/15 px-2 py-0.5 text-xs font-semibold text-rose-300" title="Auto-golos">
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-rose-500/15 px-2 py-0.5 text-xs font-semibold text-rose-300" title="Auto-golos">
                         {p.ownGoals} AG
                       </span>
                     ) : <span className="text-slate-600">—</span>}
                   </Td>
                   <Td align="left">
                     {p.motm > 0 ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/15 px-2 py-0.5 text-xs font-semibold text-amber-300">
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-amber-400/15 px-2 py-0.5 text-xs font-semibold text-amber-300">
                         ⭐ {p.motm}
                       </span>
                     ) : <span className="text-slate-600">—</span>}
                   </Td>
                   <Td align="left">
                     {injured && injury ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2 py-0.5 text-xs font-semibold text-rose-300 ring-1 ring-rose-500/30">
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-rose-500/10 px-2 py-0.5 text-xs font-semibold text-rose-300 ring-1 ring-rose-500/30">
                         {injury.type}
                       </span>
                     ) : <span className="text-slate-600">—</span>}
                   </Td>
                   <Td align="left">
                     {injured && injury ? (
-                      <span className="text-xs font-semibold text-rose-300">{formatTimeGone(injury)}</span>
+                      <span className="whitespace-nowrap text-xs font-semibold text-rose-300">{formatTimeGone(injury)}</span>
                     ) : <span className="text-slate-600">—</span>}
                   </Td>
                   <Td align="left">{p.wins}</Td>

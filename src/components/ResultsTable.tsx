@@ -134,23 +134,23 @@ function MatchDetail({ match, season }: { match: Match; season: Season }) {
                   return (
                     <span
                       key={name}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-200 ring-1 ring-white/10 transition hover:bg-white/10"
+                      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-200 ring-1 ring-white/10 transition hover:bg-white/10"
                     >
                       <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
                       {injured && <MedicalIcon size={12} />}
                       {name}
                       {goals > 0 && (
-                        <span className="inline-flex items-center gap-0.5 rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                        <span className="inline-flex items-center gap-0.5 whitespace-nowrap rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-bold text-white">
                           {goals} ⚽
                         </span>
                       )}
                       {ownGoals > 0 && (
-                        <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-500/15 px-1.5 py-0.5 text-[10px] font-bold text-rose-300" title="Auto-golos">
+                        <span className="inline-flex items-center gap-0.5 whitespace-nowrap rounded-full bg-rose-500/15 px-1.5 py-0.5 text-[10px] font-bold text-rose-300" title="Auto-golos">
                           {ownGoals} AG
                         </span>
                       )}
                       {match.motm === name && (
-                        <span className="rounded-full bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">⭐ MOTM</span>
+                        <span className="whitespace-nowrap rounded-full bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">⭐ MOTM</span>
                       )}
                     </span>
                   );
