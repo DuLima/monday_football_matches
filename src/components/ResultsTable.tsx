@@ -21,68 +21,71 @@ export function ResultsTable({ season }: { season: Season }) {
 
   return (
     <div className="card overflow-x-auto">
-      <div className="grid min-w-[560px] grid-cols-[110px_1fr_120px_1fr_40px] items-center border-b border-white/10 px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-        <div>Data</div>
-        <div>Equipa da Casa</div>
-        <div className="text-center">Resultado</div>
-        <div>Equipa Visitante</div>
-        <div />
+      {/* One fixed min width for header, rows and expanded details, so they all scroll together. */}
+      <div className="min-w-[680px]">
+        <div className="grid grid-cols-[110px_minmax(0,1fr)_120px_minmax(0,1fr)_40px] items-center border-b border-white/10 px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+          <div>Data</div>
+          <div>Equipa da Casa</div>
+          <div className="text-center">Resultado</div>
+          <div>Equipa Visitante</div>
+          <div />
+        </div>
+        <ul className="divide-y divide-white/5">
+          {rows.map(m => {
+            const isOpen = openId === m.id;
+            const played = isPlayed(m);
+            return (
+              <li key={m.id} className={'transition-colors ' + (isOpen ? 'bg-white/[0.04]' : 'hover:bg-white/[0.025]')}>
+                <div className="grid grid-cols-[110px_minmax(0,1fr)_120px_minmax(0,1fr)_40px] items-center px-4 py-3 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => played && setOpenId(isOpen ? null : m.id)}
+                    className={'text-left tabular-nums text-slate-400 ' + (played ? 'cursor-pointer hover:text-white' : 'cursor-default')}
+                  >
+                    {formatDate(m.date)}
+                  </button>
+                  <TeamName team={season.teams[m.homeTeam]} won={played && m.homeScore! > m.awayScore!} />
+                  <div className="text-center">
+                    {played ? (
+                      <span className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-1 font-display text-base font-bold tabular-nums text-white ring-1 ring-white/10">
+                        {m.homeScore} <span className="text-slate-500">–</span> {m.awayScore}
+                      </span>
+                    ) : (
+                      <StatusPill status={m.status} />
+                    )}
+                  </div>
+                  <TeamName team={season.teams[m.awayTeam]} won={played && m.awayScore! > m.homeScore!} />
+                  <div className="flex items-center justify-end gap-1">
+                    {isOwner && (
+                      <button
+                        type="button"
+                        onClick={() => setEditing(m)}
+                        className="rounded-lg bg-brand-red-soft px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-brand-red ring-1 ring-brand-red-ring transition hover:bg-brand-red hover:text-white"
+                      >
+                        Editar
+                      </button>
+                    )}
+                    {played && (
+                      <button
+                        type="button"
+                        onClick={() => setOpenId(isOpen ? null : m.id)}
+                        className="rounded-md p-1 text-slate-500 transition hover:bg-white/10 hover:text-white"
+                        aria-label="Expandir"
+                      >
+                        <span className={'inline-block transition-transform duration-300 ' + (isOpen ? 'rotate-180' : '')}>▼</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {isOpen && played && <MatchDetail match={m} season={season} />}
+              </li>
+            );
+          })}
+          {rows.length === 0 && (
+            <li className="p-6 text-center text-slate-400">Sem jogos registados.</li>
+          )}
+        </ul>
       </div>
-      <ul className="divide-y divide-white/5">
-        {rows.map(m => {
-          const isOpen = openId === m.id;
-          const played = isPlayed(m);
-          return (
-            <li key={m.id} className={'transition-colors ' + (isOpen ? 'bg-white/[0.04]' : 'hover:bg-white/[0.025]')}>
-              <div className="grid w-full min-w-[560px] grid-cols-[110px_1fr_120px_1fr_40px] items-center px-4 py-3 text-sm">
-                <button
-                  type="button"
-                  onClick={() => played && setOpenId(isOpen ? null : m.id)}
-                  className={'text-left tabular-nums text-slate-400 ' + (played ? 'cursor-pointer hover:text-white' : 'cursor-default')}
-                >
-                  {formatDate(m.date)}
-                </button>
-                <TeamName team={season.teams[m.homeTeam]} won={played && m.homeScore! > m.awayScore!} />
-                <div className="text-center">
-                  {played ? (
-                    <span className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-1 font-display text-base font-bold tabular-nums text-white ring-1 ring-white/10">
-                      {m.homeScore} <span className="text-slate-500">–</span> {m.awayScore}
-                    </span>
-                  ) : (
-                    <StatusPill status={m.status} />
-                  )}
-                </div>
-                <TeamName team={season.teams[m.awayTeam]} won={played && m.awayScore! > m.homeScore!} />
-                <div className="flex items-center justify-end gap-1">
-                  {isOwner && (
-                    <button
-                      type="button"
-                      onClick={() => setEditing(m)}
-                      className="rounded-lg bg-brand-red-soft px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-brand-red ring-1 ring-brand-red-ring transition hover:bg-brand-red hover:text-white"
-                    >
-                      Editar
-                    </button>
-                  )}
-                  {played && (
-                    <button
-                      type="button"
-                      onClick={() => setOpenId(isOpen ? null : m.id)}
-                      className="rounded-md p-1 text-slate-500 transition hover:bg-white/10 hover:text-white"
-                      aria-label="Expandir"
-                    >
-                      <span className={'inline-block transition-transform duration-300 ' + (isOpen ? 'rotate-180' : '')}>▼</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-              {isOpen && played && <MatchDetail match={m} season={season} />}
-            </li>
-          );
-        })}
-        {rows.length === 0 && (
-          <li className="p-6 text-center text-slate-400">Sem jogos registados.</li>
-        )}
-      </ul>
 
       {editing && (
         <EditMatchModal match={editing} season={season} onClose={() => setEditing(null)} />
