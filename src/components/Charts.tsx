@@ -8,8 +8,8 @@ import { MedicalIcon } from './MedicalIcon';
 import { SectionTitle } from './ui';
 
 const COLOR_CHITI = '#f0503f';
-const COLOR_GRILO = '#4b93dd';
-const COLOR_DRAW = '#fbbf24';
+const COLOR_GRILO = '#f5c518';
+const COLOR_DRAW = '#94a3b8';
 const COLOR_TOTAL = '#c6f432';
 
 const AXIS_LABEL = '#94a3b8';

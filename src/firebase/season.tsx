@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { doc, onSnapshot, runTransaction, setDoc } from 'firebase/firestore';
-import type { Injury, Match, Season } from '../data/types';
+import type { Injury, Match, Season, TeamId } from '../data/types';
 import { season as staticSeason } from '../data/season';
 import { firebaseEnabled, firestore } from './config';
 
@@ -18,6 +18,17 @@ const SeasonContext = createContext<SeasonState | null>(null);
 
 const SEASON_DOC = () => doc(firestore(), 'seasons', String(staticSeason.year));
 
+// Team colours belong to the app's design, so the ones in code win over
+// whatever an older saved season document still has.
+function withCodeTeamColors(s: Season): Season {
+  const teams = { ...s.teams };
+  for (const id of Object.keys(staticSeason.teams) as TeamId[]) {
+    const { color, colorSoft } = staticSeason.teams[id];
+    teams[id] = { ...teams[id], color, colorSoft };
+  }
+  return { ...s, teams };
+}
+
 function stripUndefined<T>(v: T): T {
   return JSON.parse(JSON.stringify(v));
 }
@@ -31,7 +42,7 @@ export function SeasonProvider({ children }: { children: ReactNode }) {
     if (!firebaseEnabled) return;
     return onSnapshot(SEASON_DOC(), snap => {
       if (snap.exists()) {
-        setSeason(snap.data() as Season);
+        setSeason(withCodeTeamColors(snap.data() as Season));
         setSource('firestore');
       } else {
         setSeason(staticSeason);

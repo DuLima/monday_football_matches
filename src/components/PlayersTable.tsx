@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Season, TeamId } from '../data/types';
 import { useAuth } from '../firebase/auth';
+import { textOn } from '../lib/color';
 import { formatTimeGone, getInjury, isInjured } from '../lib/injuries';
 import { playerStats } from '../lib/stats';
 import { InjuryDialog } from './InjuryDialog';
@@ -61,8 +62,8 @@ export function PlayersTable({ season }: { season: Season }) {
                         return (
                           <span
                             key={t}
-                            className="inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-bold text-white/95 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.15)]"
-                            style={{ backgroundColor: team.color }}
+                            className="inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-bold shadow-[inset_0_0_0_1px_rgb(255_255_255/0.15)]"
+                            style={{ backgroundColor: team.color, color: textOn(team.color) }}
                           >
                             {team.name} ({p.perTeam[t]})
                           </span>

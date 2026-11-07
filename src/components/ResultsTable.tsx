@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Match, Season, TeamId } from '../data/types';
 import { playerGoals, playerName, playerOwnGoals } from '../data/types';
 import { useAuth } from '../firebase/auth';
+import { textOn } from '../lib/color';
 import { formatDate, todayISO } from '../lib/format';
 import { isInjured } from '../lib/injuries';
 import { isPlayed } from '../lib/stats';
@@ -125,7 +126,7 @@ function MatchDetail({ match, season }: { match: Match; season: Season }) {
           const players = match.players?.[t] ?? [];
           return (
             <div key={t}>
-              <div className="mb-3 inline-block rounded-lg px-3 py-1 text-xs font-bold text-white shadow-lg" style={{ backgroundColor: team.color }}>
+              <div className="mb-3 inline-block rounded-lg px-3 py-1 text-xs font-bold shadow-lg" style={{ backgroundColor: team.color, color: textOn(team.color) }}>
                 {team.name}
               </div>
               <div className="flex flex-wrap gap-1.5">

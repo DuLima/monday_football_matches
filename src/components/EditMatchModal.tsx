@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { Match, MatchPlayer, MatchStatus, PlayerEntry, Season, Team, TeamId } from '../data/types';
 import { playerGoals, playerName, playerOwnGoals } from '../data/types';
 import { useSeason } from '../firebase/season';
+import { textOn } from '../lib/color';
 import { formatDate } from '../lib/format';
 import { isInjured } from '../lib/injuries';
 import { MedicalIcon } from './MedicalIcon';
@@ -280,11 +281,11 @@ function TeamRoster({
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
       <div
-        className="flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-white"
-        style={{ backgroundColor: team.color }}
+        className="flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider"
+        style={{ backgroundColor: team.color, color: textOn(team.color) }}
       >
         <span>{team.name}</span>
-        <span className={'rounded-full bg-white/20 px-2 py-0.5 text-[10px] ' + (mismatch ? 'animate-pulse text-amber-100 ring-1 ring-amber-200/70' : '')}>
+        <span className={'rounded-full bg-white/20 px-2 py-0.5 text-[10px] ' + (mismatch ? 'animate-pulse !bg-black/50 text-amber-200 ring-1 ring-amber-200/70' : '')}>
           {goalTotal} ⚽{expected !== null ? ` / ${expected}` : ''}
         </span>
       </div>
@@ -373,13 +374,13 @@ function PoolColumn({
         <div className="flex gap-1">
           <button
             type="button" onClick={onAddNewToHome}
-            className="flex-1 rounded-md px-2 py-1 text-[10px] font-bold text-white transition hover:brightness-125"
-            style={{ backgroundColor: homeTeam.color }}
+            className="flex-1 rounded-md px-2 py-1 text-[10px] font-bold transition hover:brightness-125"
+            style={{ backgroundColor: homeTeam.color, color: textOn(homeTeam.color) }}
           >← {homeTeam.shortName}</button>
           <button
             type="button" onClick={onAddNewToAway}
-            className="flex-1 rounded-md px-2 py-1 text-[10px] font-bold text-white transition hover:brightness-125"
-            style={{ backgroundColor: awayTeam.color }}
+            className="flex-1 rounded-md px-2 py-1 text-[10px] font-bold transition hover:brightness-125"
+            style={{ backgroundColor: awayTeam.color, color: textOn(awayTeam.color) }}
           >{awayTeam.shortName} →</button>
         </div>
       </div>
@@ -393,8 +394,8 @@ function AddArrow({ direction, color, onClick, title }: {
   return (
     <button
       type="button" onClick={onClick} title={title}
-      className="flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold text-white transition hover:scale-110 hover:brightness-125"
-      style={{ backgroundColor: color }}
+      className="flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold transition hover:scale-110 hover:brightness-125"
+      style={{ backgroundColor: color, color: textOn(color) }}
     >
       {direction === 'left' ? '←' : '→'}
     </button>
