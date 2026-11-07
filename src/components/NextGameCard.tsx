@@ -68,14 +68,14 @@ export function NextGameCard({ match, season }: Props) {
       <div className="relative mt-4 flex items-center justify-between gap-2">
         <div className="flex flex-1 flex-col items-center gap-2 text-center">
           <div className="transition-transform duration-300 hover:-rotate-6 hover:scale-110">
-            <TeamBadge team={home} size={64} />
+            <TeamBadge team={home} size={88} />
           </div>
           <span className="text-xs font-semibold text-slate-300">{home.shortName}</span>
         </div>
         <div className="font-display text-sm font-bold uppercase tracking-widest text-slate-500">vs</div>
         <div className="flex flex-1 flex-col items-center gap-2 text-center">
           <div className="transition-transform duration-300 hover:rotate-6 hover:scale-110">
-            <TeamBadge team={away} size={64} />
+            <TeamBadge team={away} size={88} />
           </div>
           <span className="text-xs font-semibold text-slate-300">{away.shortName}</span>
         </div>

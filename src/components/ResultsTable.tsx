@@ -7,6 +7,7 @@ import { isInjured } from '../lib/injuries';
 import { isPlayed } from '../lib/stats';
 import { EditMatchModal } from './EditMatchModal';
 import { MedicalIcon } from './MedicalIcon';
+import { TeamBadge } from './TeamBadge';
 
 export function ResultsTable({ season }: { season: Season }) {
   const { isOwner } = useAuth();
@@ -97,7 +98,7 @@ export function ResultsTable({ season }: { season: Season }) {
 function TeamName({ team, won }: { team: Season['teams'][TeamId]; won: boolean }) {
   return (
     <div className={'flex items-center gap-2 font-medium ' + (won ? 'text-white' : 'text-slate-400')}>
-      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: team.color }} />
+      <TeamBadge team={team} size={26} />
       <span className="truncate">{team.name}</span>
       {won && <span className="text-[10px] font-bold text-lime">V</span>}
     </div>

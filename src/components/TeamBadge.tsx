@@ -1,9 +1,17 @@
 import type { Team } from '../data/types';
-import { ChitiLogo } from './icons/ChitiLogo';
-import { GriloLogo } from './icons/GriloLogo';
 
+// Emblems live in public/emblems/<team id>.webp; BASE_URL keeps the path valid on GitHub Pages.
 export function TeamBadge({ team, size = 72 }: { team: Team; size?: number }) {
-  if (team.id === 'chiti') return <ChitiLogo size={size} />;
-  if (team.id === 'grilo') return <GriloLogo size={size} />;
-  return null;
+  return (
+    <img
+      src={`${import.meta.env.BASE_URL}emblems/${team.id}.webp`}
+      alt={team.name}
+      title={team.name}
+      width={size}
+      height={size}
+      loading="lazy"
+      decoding="async"
+      className="shrink-0 object-contain drop-shadow-[0_4px_10px_rgb(0_0_0/0.5)]"
+    />
+  );
 }

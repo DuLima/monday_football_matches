@@ -2,6 +2,7 @@ import type { Match, Season } from '../data/types';
 import { teamStats } from '../lib/stats';
 import { fmt1, fmtSigned } from '../lib/format';
 import { FormPills } from './FormPills';
+import { TeamBadge } from './TeamBadge';
 
 type Props = {
   season: Season;
@@ -44,7 +45,7 @@ export function StatsTable({ season, matches, showForm = true }: Props) {
                   <Td align="left" className="pl-5">
                     <span className="flex items-center gap-3">
                       <span className={'font-display text-lg font-bold ' + (i === 0 ? 'text-lime' : 'text-slate-500')}>{i + 1}</span>
-                      <span className="h-8 w-1 rounded-full" style={{ background: team.color }} />
+                      <TeamBadge team={team} size={36} />
                       <span className="whitespace-nowrap font-semibold text-white">{team.name}</span>
                     </span>
                   </Td>
