@@ -1,5 +1,4 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { WandBallIcon } from './icons/WandBallIcon';
 import { OwnerBar } from './OwnerBar';
 
 export type TabId = 'stats' | 'charts' | 'monthly' | 'players' | 'results';
@@ -37,9 +36,13 @@ export function Header({ active, onChange }: Props) {
     <header className="sticky top-0 z-30 border-b border-white/5 bg-ink-950/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-red to-chiti shadow-[0_8px_30px_-6px_rgb(244_63_94/0.7)]">
-            <WandBallIcon size={30} />
-          </div>
+          <img
+            src={`${import.meta.env.BASE_URL}logo.webp`}
+            alt="Segundas Mágicas"
+            width={48}
+            height={48}
+            className="h-12 w-12 shrink-0 rounded-2xl ring-1 ring-white/10 shadow-[0_8px_30px_-6px_rgb(244_63_94/0.6)] transition-transform duration-300 hover:scale-110 hover:-rotate-3"
+          />
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brand-red">Segundas</div>
             <div className="-mt-0.5 font-display text-lg font-bold leading-tight tracking-tight text-white">Mágicas</div>
